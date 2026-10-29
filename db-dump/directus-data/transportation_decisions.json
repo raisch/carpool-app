@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "id": 9007,
+      "event_id": 9001,
+      "user_id": 9013,
+      "direction": "outbound",
+      "decision": "ride",
+      "trip_ride_id": 9003,
+      "updated_at": "2026-10-29T20:39:35.982Z"
+    },
+    {
+      "id": 9008,
+      "event_id": 9001,
+      "user_id": 9013,
+      "direction": "return",
+      "decision": "opt_out",
+      "trip_ride_id": null,
+      "updated_at": "2026-10-29T20:39:35.982Z"
+    }
+  ]
+}

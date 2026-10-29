@@ -1,0 +1,12 @@
+{
+  "data": [
+    {
+      "id": 9002,
+      "status": "published",
+      "name": "Rob's Honda CRX",
+      "vehicle_type": "Car",
+      "seats": 4,
+      "primary_driver_id": 9012
+    }
+  ]
+}

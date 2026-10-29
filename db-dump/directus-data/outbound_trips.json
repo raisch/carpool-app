@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "id": 9001,
+      "event_id": 9001,
+      "status": "published",
+      "destination": "Boston",
+      "departs_from": "Waltham",
+      "departs_on": "2026-11-10",
+      "departs_at": "08:00:00",
+      "arrives_at": "09:00:00"
+    }
+  ]
+}

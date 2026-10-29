@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "id": 9001,
+      "status": "published",
+      "name": "Demo Carpool",
+      "description": "A complete local carpool seeded for development.",
+      "start_date": "2026-11-10",
+      "end_date": "2026-11-12",
+      "location": "Boston"
+    }
+  ]
+}
