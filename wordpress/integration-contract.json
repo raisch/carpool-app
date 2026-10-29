@@ -1,0 +1,83 @@
+{
+	"version": "1.0.0",
+	"sourceSystem": "wordpress",
+	"environments": {
+		"development": {
+			"wordpressUrl": "http://localhost:8080",
+			"carpoolUrl": "http://localhost:5173",
+			"issuer": "https://www.ligerbots.org",
+			"audience": "carpool-provisioning",
+			"keyId": "wordpress-development"
+		},
+		"staging": {
+			"wordpressUrl": null,
+			"carpoolUrl": null,
+			"issuer": "https://www.ligerbots.org",
+			"audience": "carpool-provisioning",
+			"keyId": null
+		},
+		"production": {
+			"wordpressUrl": "https://www.ligerbots.org",
+			"carpoolUrl": null,
+			"issuer": "https://www.ligerbots.org",
+			"audience": "carpool-provisioning",
+			"keyId": null
+		}
+	},
+	"provisioning": {
+		"method": "POST",
+		"path": "/api/integration/wordpress/provision",
+		"jwtAlgorithm": "RS256",
+		"ttlSeconds": 60,
+		"clockSkewSeconds": 5,
+		"requiredClaims": ["iss", "sub", "aud", "iat", "nbf", "exp", "jti", "user"],
+		"response": {
+			"requiredFields": ["launch_code", "expires_in"],
+			"launchCode": "opaque-single-use"
+		}
+	},
+	"profile": {
+		"sourceUid": { "claim": "sub", "type": "string", "maxLength": 128 },
+		"firstName": {
+			"claim": "user.first_name",
+			"type": "string",
+			"required": true,
+			"maxLength": 100,
+			"retention": "while the Carpool identity is active"
+		},
+		"lastName": {
+			"claim": "user.last_name",
+			"type": "string",
+			"required": true,
+			"maxLength": 100,
+			"retention": "while the Carpool identity is active"
+		},
+		"email": {
+			"claim": "user.email",
+			"type": "email",
+			"required": true,
+			"maxLength": 320,
+			"retention": "while the Carpool identity is active"
+		},
+		"telephone": {
+			"claim": "user.telephone",
+			"type": "string",
+			"required": false,
+			"maxLength": 40,
+			"retention": "only while required by an approved Carpool workflow"
+		}
+	},
+	"roleMapping": {
+		"source": "Carpool administrative assignment",
+		"roleClaimAccepted": false,
+		"newIdentityRole": "rider",
+		"existingIdentityRole": "preserved",
+		"wordpressCanChangeRole": false,
+		"wordpressCanDeactivate": false,
+		"carpoolAdminCanChangeRole": true,
+		"carpoolAdminCanDeactivate": true,
+		"default": "rider",
+		"approvalRequired": false
+	},
+	"identityKey": ["source_system", "source_uid"]
+}

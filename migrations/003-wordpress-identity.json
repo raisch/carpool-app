@@ -1,0 +1,43 @@
+{
+	"version": "003-wordpress-identity",
+	"description": "WordPress source identity fields for provisioned Carpool users",
+	"collection": "users",
+	"fields": [
+		{
+			"field": "source_system",
+			"type": "string",
+			"maxLength": 32,
+			"note": "Identity provider namespace; required by the database backfill"
+		},
+		{
+			"field": "source_uid",
+			"type": "string",
+			"maxLength": 128,
+			"note": "Stable source-system identifier; required by the database backfill"
+		},
+		{
+			"field": "first_name",
+			"type": "string",
+			"maxLength": 100,
+			"note": "Provisioned WordPress profile field"
+		},
+		{
+			"field": "last_name",
+			"type": "string",
+			"maxLength": 100,
+			"note": "Provisioned WordPress profile field"
+		},
+		{
+			"field": "email",
+			"type": "string",
+			"maxLength": 320,
+			"note": "Provisioned WordPress email; validated at the integration boundary"
+		},
+		{
+			"field": "telephone",
+			"type": "string",
+			"maxLength": 40,
+			"note": "Optional provisioned telephone; retained only for approved workflows"
+		}
+	]
+}

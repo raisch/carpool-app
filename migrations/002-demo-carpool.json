@@ -1,0 +1,49 @@
+{
+	"version": "002-demo-carpool",
+	"description": "Idempotent local demonstration carpool with one user of each role",
+	"users": [
+		{ "id": 9001, "displayName": "Demo Admin", "role": "admin", "status": "active" },
+		{ "id": 9002, "displayName": "Demo Driver", "role": "driver", "status": "active" },
+		{ "id": 9003, "displayName": "Demo Rider", "role": "rider", "status": "active" }
+	],
+	"event": {
+		"id": 9001,
+		"status": "published",
+		"name": "Demo Carpool",
+		"description": "A complete local carpool seeded for development.",
+		"startDate": "2026-11-10",
+		"endDate": "2026-11-12",
+		"location": "Boston"
+	},
+	"trips": {
+		"outbound": {
+			"id": 9001,
+			"destination": "Boston",
+			"departsFrom": "Waltham",
+			"departsOn": "2026-11-10",
+			"departsAt": "08:00",
+			"arrivesAt": "09:00"
+		},
+		"return": {
+			"id": 9002,
+			"destination": "Waltham",
+			"departsFrom": "Boston",
+			"departsOn": "2026-11-12",
+			"departsAt": "17:00",
+			"arrivesAt": "18:00"
+		}
+	},
+	"vehicle": {
+		"id": 9001,
+		"status": "published",
+		"name": "Demo Van",
+		"vehicleType": "Van",
+		"seats": 4,
+		"primaryDriverId": 9002
+	},
+	"tripRides": [
+		{ "id": 9001, "tripId": 9001, "vehicleId": 9001 },
+		{ "id": 9002, "tripId": 9002, "vehicleId": 9001 }
+	],
+	"rider": { "userId": 9003, "tripRideIds": [9001, 9002] }
+}

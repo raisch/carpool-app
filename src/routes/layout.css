@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+:where(a, button, input, select, textarea):focus-visible {
+	outline: 3px solid #1d4ed8;
+	outline-offset: 3px;
+}
+
+.skip-link {
+	position: fixed;
+	left: 1rem;
+	top: 0.75rem;
+	z-index: 100;
+	transform: translateY(-200%);
+	border-radius: 0.5rem;
+	background: #172554;
+	padding: 0.75rem 1rem;
+	font-weight: 700;
+	color: white;
+}
+
+.skip-link:focus {
+	transform: translateY(0);
+}

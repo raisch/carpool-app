@@ -1,0 +1,160 @@
+{
+	"version": "001-normalized-carpool",
+	"collections": [
+		{
+			"name": "events",
+			"note": "Published carpool events",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "status", "type": "string", "required": true, "maxLength": 16 },
+				{ "field": "name", "type": "string", "required": true, "maxLength": 255 },
+				{
+					"field": "description",
+					"type": "text",
+					"maxLength": 1024,
+					"interface": "input-multiline"
+				},
+				{ "field": "start_date", "type": "date", "required": true },
+				{ "field": "end_date", "type": "date", "required": true },
+				{ "field": "location", "type": "string", "required": true, "maxLength": 255 }
+			]
+		},
+		{
+			"name": "outbound_trips",
+			"note": "Published outbound trips to an event",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "event_id", "type": "integer", "required": true },
+				{ "field": "status", "type": "string", "required": true, "maxLength": 16 },
+				{ "field": "destination", "type": "string", "required": true, "maxLength": 255 },
+				{ "field": "departs_from", "type": "string", "required": true, "maxLength": 255 },
+				{ "field": "departs_on", "type": "date", "required": true },
+				{ "field": "departs_at", "type": "time", "required": true },
+				{ "field": "arrives_at", "type": "time" }
+			]
+		},
+		{
+			"name": "return_trips",
+			"note": "Published return trips from an event",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "event_id", "type": "integer", "required": true },
+				{ "field": "status", "type": "string", "required": true, "maxLength": 16 },
+				{ "field": "destination", "type": "string", "required": true, "maxLength": 255 },
+				{ "field": "departs_from", "type": "string", "required": true, "maxLength": 255 },
+				{ "field": "departs_on", "type": "date", "required": true },
+				{ "field": "departs_at", "type": "time", "required": true },
+				{ "field": "arrives_at", "type": "time" }
+			]
+		},
+		{
+			"name": "vehicles",
+			"note": "Carpool vehicles and their primary drivers",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "status", "type": "string", "required": true, "maxLength": 16 },
+				{ "field": "name", "type": "string", "required": true, "maxLength": 255 },
+				{ "field": "vehicle_type", "type": "string", "required": true, "maxLength": 32 },
+				{ "field": "seats", "type": "integer", "required": true },
+				{ "field": "primary_driver_id", "type": "integer", "required": true }
+			]
+		},
+		{
+			"name": "trip_rides",
+			"note": "Assignment of one vehicle to one trip",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "trip_id", "type": "integer", "required": true },
+				{ "field": "vehicle_id", "type": "integer", "required": true }
+			]
+		},
+		{
+			"name": "trip_ride_riders",
+			"note": "Rider junction for a trip ride",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "trip_ride_id", "type": "integer", "required": true },
+				{ "field": "user_id", "type": "integer", "required": true }
+			]
+		},
+		{
+			"name": "transportation_decisions",
+			"note": "Explicit ride or opt-out decision per event direction",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "event_id", "type": "integer", "required": true },
+				{ "field": "user_id", "type": "integer", "required": true },
+				{ "field": "direction", "type": "string", "required": true, "maxLength": 8 },
+				{ "field": "decision", "type": "string", "required": true, "maxLength": 8 },
+				{ "field": "trip_ride_id", "type": "integer" },
+				{ "field": "updated_at", "type": "timestamp", "required": true }
+			]
+		},
+		{
+			"name": "users",
+			"note": "Minimal externally owned carpool identity references",
+			"fields": [
+				{ "field": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+				{ "field": "display_name", "type": "string", "required": true, "maxLength": 255 },
+				{ "field": "role", "type": "string", "required": true, "maxLength": 8 },
+				{ "field": "status", "type": "string", "required": true, "maxLength": 16 }
+			]
+		}
+	],
+	"relations": [
+		{
+			"collection": "outbound_trips",
+			"field": "event_id",
+			"relatedCollection": "events",
+			"onDelete": "CASCADE"
+		},
+		{
+			"collection": "return_trips",
+			"field": "event_id",
+			"relatedCollection": "events",
+			"onDelete": "CASCADE"
+		},
+		{
+			"collection": "vehicles",
+			"field": "primary_driver_id",
+			"relatedCollection": "users",
+			"onDelete": "RESTRICT"
+		},
+		{
+			"collection": "trip_rides",
+			"field": "vehicle_id",
+			"relatedCollection": "vehicles",
+			"onDelete": "RESTRICT"
+		},
+		{
+			"collection": "trip_ride_riders",
+			"field": "trip_ride_id",
+			"relatedCollection": "trip_rides",
+			"onDelete": "CASCADE"
+		},
+		{
+			"collection": "trip_ride_riders",
+			"field": "user_id",
+			"relatedCollection": "users",
+			"onDelete": "RESTRICT"
+		},
+		{
+			"collection": "transportation_decisions",
+			"field": "event_id",
+			"relatedCollection": "events",
+			"onDelete": "CASCADE"
+		},
+		{
+			"collection": "transportation_decisions",
+			"field": "user_id",
+			"relatedCollection": "users",
+			"onDelete": "CASCADE"
+		},
+		{
+			"collection": "transportation_decisions",
+			"field": "trip_ride_id",
+			"relatedCollection": "trip_rides",
+			"onDelete": "SET NULL"
+		}
+	]
+}
