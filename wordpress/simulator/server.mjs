@@ -255,11 +255,11 @@ function loginPage(message = '') {
     <label>Test WordPress user
       <select name="user_id">
         ${[...users.values()]
-			.map(
-				(user) =>
-					`<option value="${escapeHtml(user.id)}">${escapeHtml(user.displayName)} (${escapeHtml(user.role)})</option>`
-			)
-			.join('')}
+					.map(
+						(user) =>
+							`<option value="${escapeHtml(user.id)}">${escapeHtml(user.displayName)} (${escapeHtml(user.role)})</option>`
+					)
+					.join('')}
       </select>
     </label>
     <button type="submit">Log in</button>
