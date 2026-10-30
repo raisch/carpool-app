@@ -65,39 +65,10 @@ pnpm directus:migrate
 pnpm directus:test
 ```
 
-### Tab 2: Carpool app
+The Compose stack also starts the SvelteKit app and WordPress simulator. No
+additional app or simulator tabs are required.
 
-```powershell
-Set-Location C:\path\to\carpool-app
-pnpm dev
-```
-
-Leave this tab open while using the app.
-
-### Tab 3: WordPress simulator
-
-```powershell
-Set-Location C:\path\to\carpool-app
-node --env-file=.env wordpress/simulator/server.mjs
-```
-
-Leave this tab open while testing the WordPress-to-Carpool handoff.
-
-### Optional: open tabs from an existing Windows Terminal tab
-
-After setting the correct repository path, Windows Terminal can open the
-three tabs with `wt.exe`:
-
-```powershell
-$project = 'C:\path\to\carpool-app'
-wt.exe `
-  new-tab --title 'Carpool Docker' powershell -NoExit -Command "Set-Location '$project'; pnpm docker:up" `
-  `; new-tab --title 'Carpool App' powershell -NoExit -Command "Set-Location '$project'; pnpm dev" `
-  `; new-tab --title 'WordPress Simulator' powershell -NoExit -Command "Set-Location '$project'; node --env-file=.env wordpress/simulator/server.mjs"
-```
-
-The `wt.exe` command starts all three processes at once. Run migrations
-separately after Directus has finished starting:
+Run migrations separately after Directus has finished starting:
 
 ```powershell
 Set-Location C:\path\to\carpool-app
@@ -219,40 +190,25 @@ Open a new PowerShell window and change to the project directory:
 Set-Location C:\path\to\carpool-app
 ```
 
-Start SvelteKit:
+The SvelteKit development server is already started by Docker Compose:
 
 ```powershell
-pnpm dev
+docker compose ps
 ```
 
 Keep this window open. The app is available at:
 
 <http://localhost:5173>
 
-The `pnpm dev` script loads `.env` automatically.
+The app container loads the relevant values from `.env` through
+`docker-compose.yml`.
 
 ## 7. Start the WordPress simulator
 
-Open another PowerShell window and change to the project directory:
-
-```powershell
-Set-Location C:\path\to\carpool-app
-```
-
-With Node.js 20 or newer, start the simulator with:
-
-```powershell
-node --env-file=.env wordpress/simulator/server.mjs
-```
-
-The simulator is available at:
+The WordPress simulator is already started by Docker Compose. It is available
+at:
 
 <http://localhost:8080>
-
-The `pnpm wordpress:simulator` script does not load `.env` in the current
-repository version. If you use that command, export the required variables
-into the PowerShell session first, or use the `node --env-file=.env` command
-above.
 
 ## 8. Test the authenticated flow
 
@@ -271,39 +227,22 @@ a signed server-to-server provisioning request and a one-time launch code.
 
 ## 9. Run all services with one command
 
-From PowerShell, you can start the Carpool app and simulator together:
-
-```powershell
-pnpm dev
-```
-
-Then open a second PowerShell window for the simulator:
-
-```powershell
-node --env-file=.env wordpress/simulator/server.mjs
-```
-
-Docker Compose remains independent and should be started first with:
+Docker Compose starts PostgreSQL, Directus, the Carpool app, and the
+WordPress simulator together:
 
 ```powershell
 pnpm docker:up
 ```
 
-Keep all three processes running:
+Check the services with `docker compose ps`:
 
-| Process                 | Command                                               | URL                     |
-| ----------------------- | ----------------------------------------------------- | ----------------------- |
-| PostgreSQL and Directus | `pnpm docker:up`                                      | <http://localhost:8055> |
-| Carpool app             | `pnpm dev`                                            | <http://localhost:5173> |
-| WordPress simulator     | `node --env-file=.env wordpress/simulator/server.mjs` | <http://localhost:8080> |
+| Process                 | Command          | URL                     |
+| ----------------------- | ---------------- | ----------------------- |
+| PostgreSQL and Directus | `pnpm docker:up` | <http://localhost:8055> |
+| Carpool app             | `pnpm docker:up` | <http://localhost:5173> |
+| WordPress simulator     | `pnpm docker:up` | <http://localhost:8080> |
 
 ## 10. Stop the services
-
-In the PowerShell windows running Node processes, press:
-
-```text
-Ctrl+C
-```
 
 Stop Docker Compose:
 
