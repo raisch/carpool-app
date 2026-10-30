@@ -16,8 +16,8 @@
 	<title>Event transportation | Ligerbots</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-50 text-slate-950">
-	<header class="border-b border-slate-200 bg-white">
+<div class="legacy-page text-slate-950">
+	<header class="legacy-page-header">
 		<div class="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
 			<a class="text-sm font-medium text-blue-700 hover:underline" href={resolve('/')}
 				>← All events</a
@@ -39,29 +39,48 @@
 				/>
 			</div>
 		{:else}
-			<section aria-labelledby="event-heading">
-				<p class="text-sm font-medium tracking-wide text-blue-700 uppercase">
-					{data.details.event.startDate} — {data.details.event.endDate}
-				</p>
-				<h2 id="event-heading" class="mt-2 text-3xl font-bold">{data.details.event.name}</h2>
-				<p class="mt-2 text-slate-600">{data.details.event.location}</p>
-				{#if data.details.event.description}
-					<p class="mt-4 max-w-3xl text-slate-700">{data.details.event.description}</p>
-				{/if}
-				{#if isAdmin}
-					<div class="no-print mt-5 flex flex-wrap gap-3" aria-label="Administrator event reports">
-						<a
-							class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
-							href={resolve('/events/[eventId]/riders', { eventId: data.eventId })}
-							>Rider print view</a
-						>
-						<a
-							class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
-							href={resolve('/events/[eventId]/export', { eventId: data.eventId })}
-							>Download rider CSV</a
-						>
+			<section class="legacy-panel" aria-labelledby="event-heading">
+				<div class="legacy-panel-heading flex items-center justify-between gap-3">
+					<h2 id="event-heading" class="font-semibold">{data.details.event.name}</h2>
+					<span class="text-sm text-blue-100">Event details</span>
+				</div>
+				<div class="legacy-panel-body">
+					<div class="legacy-meta-grid">
+						<div>
+							<span class="legacy-meta-label">Dates</span>
+							<span class="text-sm font-semibold text-slate-800"
+								>{data.details.event.startDate} — {data.details.event.endDate}</span
+							>
+						</div>
+						<div>
+							<span class="legacy-meta-label">Location</span>
+							<span class="text-sm font-semibold text-slate-800">{data.details.event.location}</span
+							>
+						</div>
 					</div>
-				{/if}
+					{#if data.details.event.description}
+						<p class="mt-3 max-w-3xl text-sm leading-6 text-slate-700">
+							{data.details.event.description}
+						</p>
+					{/if}
+					{#if isAdmin}
+						<div
+							class="no-print mt-4 flex flex-wrap gap-2"
+							aria-label="Administrator event reports"
+						>
+							<a
+								class="legacy-action"
+								href={resolve('/events/[eventId]/riders', { eventId: data.eventId })}
+								>Rider print view</a
+							>
+							<a
+								class="legacy-action"
+								href={resolve('/events/[eventId]/export', { eventId: data.eventId })}
+								>Download rider CSV</a
+							>
+						</div>
+					{/if}
+				</div>
 			</section>
 
 			<TransportationStatusForm

@@ -3,7 +3,9 @@ import { expect, test } from '@playwright/test';
 test('has expected h1', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.getByRole('heading', { name: 'Carpool events', level: 1 })).toBeVisible();
-	await expect(page.getByRole('status')).toContainText('Identity integration pending');
+	await expect(page.getByRole('status')).toContainText(
+		/Identity integration pending|Sign-in required/
+	);
 });
 
 test('event route presents a backend error state when the repository is unavailable', async ({

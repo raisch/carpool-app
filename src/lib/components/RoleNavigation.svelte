@@ -34,7 +34,7 @@
 					<!-- eslint-disable svelte/no-navigation-without-resolve -- simulatorUrl is an external site URL -->
 					<a
 						class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-800 hover:bg-slate-100"
-						href={simulatorUrl}>Back to simulator</a
+						href={simulatorUrl}>Return to Ligerbots</a
 					>
 					<!-- eslint-enable svelte/no-navigation-without-resolve -->
 				{/if}

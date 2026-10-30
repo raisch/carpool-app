@@ -69,7 +69,7 @@
 </script>
 
 <form
-	class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5"
+	class="legacy-form space-y-5"
 	onsubmit={(event) => {
 		event.preventDefault();
 		submit();

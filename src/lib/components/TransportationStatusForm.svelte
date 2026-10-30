@@ -127,21 +127,23 @@
 </script>
 
 <section class="mt-8" aria-labelledby="transportation-heading">
-	<div class="flex flex-wrap items-end justify-between gap-3">
+	<div class="legacy-panel-heading flex flex-wrap items-end justify-between gap-3">
 		<div>
-			<h2 id="transportation-heading" class="text-2xl font-semibold">Transportation status</h2>
-			<p class="mt-1 text-slate-600">Choose one option, or opt out, for each direction.</p>
+			<h2 id="transportation-heading" class="font-semibold">Transportation status</h2>
+			<p class="mt-1 text-sm text-blue-100">Choose one ride, or opt out, for each direction.</p>
 		</div>
 		{#if identity.status !== 'configured'}
-			<p class="max-w-sm text-sm text-amber-800">
+			<p class="max-w-sm text-sm text-amber-100">
 				Selections can be reviewed here, but saving requires a connected team-member identity.
 			</p>
 		{/if}
 	</div>
 
-	<form class="mt-6 space-y-6" aria-busy={pending} onsubmit={submit}>
-		<fieldset class="rounded-2xl border border-slate-200 bg-white p-5" disabled={!canSubmit}>
-			<legend class="px-1 text-lg font-semibold text-slate-950">Outbound · To the event</legend>
+	<form class="legacy-panel-body space-y-5" aria-busy={pending} onsubmit={submit}>
+		<fieldset class="legacy-trip p-3" disabled={!canSubmit}>
+			<legend class="legacy-trip-heading w-full font-semibold text-slate-900"
+				>Outbound · To the event</legend
+			>
 			{#if details.outbound.trip}
 				<p class="mt-1 text-sm text-slate-600">
 					{details.outbound.trip.departsOn} at {details.outbound.trip.departsAt} ·
@@ -151,18 +153,26 @@
 				<p class="mt-1 text-sm text-slate-600">No outbound trip has been configured.</p>
 			{/if}
 
-			<div class="mt-4 space-y-3">
-				{#each details.outbound.rides as ride (ride.id)}
-					<TripRideCard
-						{ride}
-						name="outbound-decision"
-						selectedRideId={outboundSelection === 'opt_out' ? null : outboundSelection}
-						onselect={chooseOutbound}
-						disabled={!canSubmit}
-					/>
-				{/each}
+			<div class="mt-3 space-y-3">
+				{#if details.outbound.rides.length === 0}
+					<p class="border border-dashed border-slate-300 bg-white p-3 text-sm text-slate-600">
+						No outbound rides have been configured yet.
+					</p>
+				{:else}
+					{#each details.outbound.rides as ride (ride.id)}
+						<TripRideCard
+							{ride}
+							name="outbound-decision"
+							selectedRideId={outboundSelection === 'opt_out' ? null : outboundSelection}
+							onselect={chooseOutbound}
+							disabled={!canSubmit}
+						/>
+					{/each}
+				{/if}
 			</div>
-			<label class="mt-4 flex cursor-pointer items-center gap-3 text-sm font-medium text-slate-800">
+			<label
+				class="mt-3 flex cursor-pointer items-center gap-3 border-t border-slate-200 pt-3 text-sm font-medium text-slate-800"
+			>
 				<input
 					type="radio"
 					name="outbound-decision"
@@ -175,8 +185,10 @@
 			</label>
 		</fieldset>
 
-		<fieldset class="rounded-2xl border border-slate-200 bg-white p-5" disabled={!canSubmit}>
-			<legend class="px-1 text-lg font-semibold text-slate-950">Return · From the event</legend>
+		<fieldset class="legacy-trip p-3" disabled={!canSubmit}>
+			<legend class="legacy-trip-heading w-full font-semibold text-slate-900"
+				>Return · From the event</legend
+			>
 			{#if details.return.trip}
 				<p class="mt-1 text-sm text-slate-600">
 					{details.return.trip.departsOn} at {details.return.trip.departsAt} ·
@@ -186,18 +198,26 @@
 				<p class="mt-1 text-sm text-slate-600">No return trip has been configured.</p>
 			{/if}
 
-			<div class="mt-4 space-y-3">
-				{#each details.return.rides as ride (ride.id)}
-					<TripRideCard
-						{ride}
-						name="return-decision"
-						selectedRideId={returnSelection === 'opt_out' ? null : returnSelection}
-						onselect={chooseReturn}
-						disabled={!canSubmit}
-					/>
-				{/each}
+			<div class="mt-3 space-y-3">
+				{#if details.return.rides.length === 0}
+					<p class="border border-dashed border-slate-300 bg-white p-3 text-sm text-slate-600">
+						No return rides have been configured yet.
+					</p>
+				{:else}
+					{#each details.return.rides as ride (ride.id)}
+						<TripRideCard
+							{ride}
+							name="return-decision"
+							selectedRideId={returnSelection === 'opt_out' ? null : returnSelection}
+							onselect={chooseReturn}
+							disabled={!canSubmit}
+						/>
+					{/each}
+				{/if}
 			</div>
-			<label class="mt-4 flex cursor-pointer items-center gap-3 text-sm font-medium text-slate-800">
+			<label
+				class="mt-3 flex cursor-pointer items-center gap-3 border-t border-slate-200 pt-3 text-sm font-medium text-slate-800"
+			>
 				<input
 					type="radio"
 					name="return-decision"
@@ -214,7 +234,7 @@
 			<button
 				type="submit"
 				disabled={!canSubmit}
-				class="rounded-lg bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800 focus:outline-2 focus:outline-offset-2 focus:outline-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+				class="legacy-action legacy-action-primary disabled:cursor-not-allowed disabled:opacity-60"
 			>
 				{pending ? 'Saving…' : 'Save transportation status'}
 			</button>

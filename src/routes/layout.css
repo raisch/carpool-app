@@ -22,3 +22,146 @@
 .skip-link:focus {
 	transform: translateY(0);
 }
+
+/* Milestone 1: compact legacy carpool panels without restoring the portal shell. */
+.legacy-page {
+	min-height: calc(100vh - 3.25rem);
+	background: #f1f3f5;
+	color: #1f2933;
+}
+
+.legacy-page-header {
+	border-bottom: 1px solid #d7dce1;
+	background: #fff;
+}
+
+.legacy-panel {
+	overflow: hidden;
+	border: 1px solid #d5dbe1;
+	border-radius: 0.35rem;
+	background: #fff;
+	box-shadow: 0 1px 2px rgb(31 41 51 / 8%);
+}
+
+.legacy-panel-heading {
+	border-bottom: 1px solid #173f6b;
+	background: #1f568a;
+	padding: 0.65rem 0.9rem;
+	color: #fff;
+}
+
+.legacy-panel-body {
+	padding: 0.9rem;
+}
+
+.legacy-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #b9c5d0;
+	border-radius: 0.25rem;
+	background: #fff;
+	padding: 0.45rem 0.7rem;
+	font-size: 0.875rem;
+	font-weight: 700;
+	color: #174a7c;
+}
+
+.legacy-action:hover {
+	background: #edf4fb;
+}
+
+.legacy-action-primary {
+	border-color: #174a7c;
+	background: #174a7c;
+	color: #fff;
+}
+
+.legacy-action-primary:hover {
+	background: #123b63;
+}
+
+.legacy-action-danger {
+	border-color: #c98989;
+	color: #9b2c2c;
+}
+
+.legacy-alert {
+	border: 1px solid #e4c56a;
+	border-radius: 0.25rem;
+	background: #fff8df;
+	padding: 0.7rem 0.85rem;
+	color: #5d4611;
+}
+
+.legacy-meta-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+	gap: 0.65rem 1.25rem;
+	border-bottom: 1px solid #e4e7ea;
+	padding-bottom: 0.85rem;
+}
+
+.legacy-meta-label {
+	display: block;
+	font-size: 0.7rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #637282;
+}
+
+.legacy-trip {
+	overflow: hidden;
+	border: 1px solid #cbd4dc;
+	border-radius: 0.3rem;
+	background: #f8fafb;
+}
+
+.legacy-trip-heading {
+	border-bottom: 1px solid #cbd4dc;
+	background: #e8edf2;
+	padding: 0.65rem 0.8rem;
+}
+
+.legacy-ride {
+	border: 1px solid #d5dbe1;
+	border-radius: 0.25rem;
+	background: #fff;
+}
+
+.legacy-ride-selected {
+	border-color: #1f568a;
+	box-shadow: 0 0 0 2px rgb(31 86 138 / 16%);
+}
+
+.legacy-form {
+	border: 1px solid #d5dbe1;
+	border-radius: 0.35rem;
+	background: #fff;
+	padding: 1rem;
+}
+
+.legacy-form input:not([type='radio']),
+.legacy-form select,
+.legacy-form textarea {
+	border-color: #b9c5d0;
+	border-radius: 0.25rem;
+}
+
+@media (max-width: 640px) {
+	.legacy-panel-body,
+	.legacy-form {
+		padding: 0.75rem;
+	}
+}
+
+@media print {
+	.legacy-page {
+		background: #fff;
+	}
+
+	.legacy-panel {
+		box-shadow: none;
+	}
+}

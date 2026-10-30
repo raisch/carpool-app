@@ -38,7 +38,8 @@ The legacy app presents carpool as part of a complete LigerBots web site:
 
 The current app has good foundations but communicates a different product:
 
-- `RoleNavigation` is a compact utility bar instead of a branded site header.
+- `RoleNavigation` is a compact utility bar instead of a branded site header;
+  its contents remain the complete top-navbar scope for Option A.
 - The landing page uses a large white header and a two-column grid of modern
   rounded cards.
 - Identity notices and error/empty states are explicit and accessible, but do
@@ -48,15 +49,17 @@ The current app has good foundations but communicates a different product:
 
 ## Alignment options
 
-### Option A — Shared branded shell (recommended)
+### Option A — Shared branded shell (follow-up target)
 
 Build a new app-owned shell that reproduces the legacy app's visible
 structure:
 
 1. `SiteMasthead`: logo/wordmark, responsive external links, and an accessible
    home link.
-2. `SiteNavigation`: role-aware primary links, current-page state, mobile
-   menu, and the existing simulator/back link.
+2. `SiteNavigation`: only the current Carpool link, role-aware links,
+   current-user information, and the existing `Return to Ligerbots` action.
+   Masthead, social, sponsor, and other external links do not belong in the
+   top navbar.
 3. `SiteMainPane`: centered responsive content column with the legacy page
    width, spacing, and panel primitives.
 4. `SiteFooter`: sponsor/team links where the required assets and legal
@@ -71,7 +74,7 @@ good accessibility boundary, and no coupling to the old deployment.
 
 **Costs:** requires a small design-system layer and asset/content decisions.
 
-### Option B — Carpool-only legacy skin
+### Option B — Carpool-only legacy skin (first implementation phase)
 
 Keep the current application shell and restyle only carpool pages:
 
@@ -98,11 +101,19 @@ carpool event and trip flows into that portal.
 should only be selected if the new app is intended to replace the old public
 site rather than serve as the carpool destination launched from it.
 
-## Recommendation
+## Decision and sequence
 
-Use **Option A**, delivered in stages, with **Option B** as the first
-release-quality slice. This gives users the legacy visual cues early without
-blocking carpool behavior on a full public-site rebuild.
+Pursue **Option B first, followed by Option A**.
+
+Phase 1 uses Option B to bring the event list, trip/ride/rider hierarchy, and
+contextual carpool actions into parity with the legacy carpool screens. This
+delivers the most important user-facing behavior quickly while preserving the
+new app's identity, authorization, accessibility, and data architecture.
+
+Phase 2 uses Option A to replace the remaining application-level presentation
+differences with an app-owned branded shell. Option A remains the desired
+end state, but it should be informed by the validated carpool interaction
+parity rather than delaying that work.
 
 ### Preserve from the new app
 
@@ -133,7 +144,7 @@ blocking carpool behavior on a full public-site rebuild.
 3. On narrow screens, navigation collapses into an accessible menu without
    changing link destinations.
 4. The signed-in identity and role remain visible where the legacy app showed
-   login/logout context; “Back to simulator” remains available when supplied.
+   login/logout context; “Return to Ligerbots” remains available when supplied.
 
 ### Event list
 
@@ -218,67 +229,77 @@ visibility, destructive-action confirmation, and the event/trip/rider flows.
 
 ## Milestones
 
-### Milestone 0 — Baseline and decisions
+### Milestone 0 — Baseline and decisions (**COMPLETE**)
 
-- [ ] Confirm whether the app is a carpool destination or a future
-  replacement for the full public portal.
-- [ ] Inventory approved logo, sponsor, social, and favicon assets.
-- [ ] Record baseline screenshots and interaction behavior from both apps.
-- [ ] Decide whether legacy navigation labels and URLs must remain exact.
-- [ ] Define the minimum supported viewport sizes and browser set.
+- [x] Confirm whether the app is a carpool destination or a future
+      replacement for the full public portal.
+- [x] Inventory candidate logo, sponsor, social, and favicon assets and record
+      their approval status.
+- [x] Record baseline screenshots and interaction behavior from both apps,
+      including the legacy backend limitation.
+- [x] Decide whether legacy navigation labels and URLs must remain exact.
+- [x] Approve the minimum supported viewport sizes and browser set.
 
-**Exit criteria:** approved option (recommended: A), asset list, URL/label
-decision, and baseline evidence are recorded.
+**Status:** scope, URL/label decisions, asset inventory, baseline evidence, and
+the viewport/browser baseline are recorded in
+[`docs/app-integration-baseline.md`](docs/app-integration-baseline.md). The
+assets are approved. The milestone remains open pending resolution or
+acceptance of the legacy-backend screenshot limitation.
 
-### Milestone 1 — Shared shell
+**Exit criteria:** approved sequence (Option B first, then Option A), approved
+asset list, URL/label decision, and baseline evidence are recorded.
+
+### Milestone 1 — Carpool-only legacy skin (Option B)
+
+- [x] Convert the landing page to legacy panel geometry and information
+      density.
+- [x] Align event metadata, action labels, admin action placement, and
+      empty/error/identity panels.
+- [x] Present outbound/return trips as distinct sections.
+- [x] Present rides with driver, vehicle, capacity, and riders in a predictable
+      scan order.
+- [x] Keep signup, rider management, and vehicle forms in context.
+- [x] Add confirmation and feedback behavior for destructive actions.
+- [x] Add visual snapshots at desktop and mobile widths.
+
+**Status:** the Option B skin is implemented in the existing application shell.
+The Playwright visual suite covers the approved 1440×900 and 390×844 widths;
+Chromium and WebKit snapshots pass locally. Firefox is configured in the
+approved browser matrix but its local Playwright binary exits before creating
+a headless profile in the current macOS environment.
+
+**Exit criteria:** a signed-in user can identify an event and reach its trips
+with the same number of meaningful steps as in the old app, and driver, rider,
+and admin flows are behaviorally equivalent while using the new API and
+authorization model.
+
+### Milestone 2 — Shared branded shell (Option A)
 
 - [ ] Add masthead, responsive navigation, content frame, and footer
-  composition.
+      composition.
 - [ ] Preserve identity states, role visibility, simulator return link, and
-  server-side authorization.
+      server-side authorization.
 - [ ] Add responsive and keyboard-accessibility tests.
 
 **Exit criteria:** every existing route renders in the branded frame without
 route or authentication regressions.
 
-### Milestone 2 — Event-list parity
-
-- [ ] Convert the landing page to legacy panel geometry and information
-  density.
-- [ ] Align event metadata, action labels, admin action placement, and
-  empty/error/identity panels.
-- [ ] Add visual snapshots at desktop and mobile widths.
-
-**Exit criteria:** a signed-in user can identify an event and reach its trips
-with the same number of meaningful steps as in the old app.
-
-### Milestone 3 — Trip, ride, and rider parity
-
-- [ ] Present outbound/return trips as distinct sections.
-- [ ] Present rides with driver, vehicle, capacity, and riders in a predictable
-  scan order.
-- [ ] Keep signup, rider management, and vehicle forms in context.
-- [ ] Add confirmation and feedback behavior for destructive actions.
-
-**Exit criteria:** driver, rider, and admin flows are behaviorally equivalent
-to the legacy flows while using the new API and authorization model.
-
-### Milestone 4 — Content and polish
+### Milestone 3 — Content and polish
 
 - [ ] Add only the legacy portal blocks that have an owner and current data
-  source; do not create stale placeholder content.
+      source; do not create stale placeholder content.
 - [ ] Tune colors, typography, spacing, borders, and responsive breakpoints
-  against approved screenshots.
+      against approved screenshots.
 - [ ] Verify asset loading, alt text, external-link behavior, and performance.
 
 **Exit criteria:** product owner accepts the visual comparison and the
 accessibility/performance checks pass.
 
-### Milestone 5 — Release and deprecation
+### Milestone 4 — Release and deprecation
 
 - [ ] Run the existing release verification and Playwright suites.
 - [ ] Run a side-by-side pilot with representative signed-out, rider, driver,
-  and admin users.
+      and admin users.
 - [ ] Document any intentional differences from the old app.
 - [ ] Retire duplicated presentation paths only after production verification.
 
@@ -287,15 +308,15 @@ the old carpool entry point can be redirected or decommissioned safely.
 
 ## Risks and guardrails
 
-| Risk | Guardrail |
-| --- | --- |
-| Copying legacy CSS creates hidden Bootstrap dependencies | Recreate the visual language with scoped tokens/primitives. |
-| Visual parity weakens accessibility | Preserve semantic landmarks, focus indicators, labels, and status roles as acceptance criteria. |
-| Hidden role links become a security assumption | Continue enforcing every permission in server handlers. |
-| Portal content becomes stale | Add content blocks only with an owner and an actual source. |
-| Mobile layout becomes a desktop shrink | Design and test the single-column mobile composition explicitly. |
-| Old and new URLs drift apart | Decide URL compatibility in Milestone 0 and add redirect/contract tests. |
-| Reusing old assets creates licensing or deployment issues | Inventory and approve assets before wiring them into the shell. |
+| Risk                                                      | Guardrail                                                                                       |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Copying legacy CSS creates hidden Bootstrap dependencies  | Recreate the visual language with scoped tokens/primitives.                                     |
+| Visual parity weakens accessibility                       | Preserve semantic landmarks, focus indicators, labels, and status roles as acceptance criteria. |
+| Hidden role links become a security assumption            | Continue enforcing every permission in server handlers.                                         |
+| Portal content becomes stale                              | Add content blocks only with an owner and an actual source.                                     |
+| Mobile layout becomes a desktop shrink                    | Design and test the single-column mobile composition explicitly.                                |
+| Old and new URLs drift apart                              | Decide URL compatibility in Milestone 0 and add redirect/contract tests.                        |
+| Reusing old assets creates licensing or deployment issues | Inventory and approve assets before wiring them into the shell.                                 |
 
 ## Definition of “like the old app”
 
