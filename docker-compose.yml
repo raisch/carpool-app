@@ -36,7 +36,93 @@ services:
     volumes:
       - directus-uploads:/directus/uploads
       - ./directus/extensions:/directus/extensions
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://localhost:8055/server/health').then((response) =>
+          process.exit(response.status < 500 ? 0 : 1)).catch(() => process.exit(1))
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  carpool:
+    image: node:22-alpine
+    working_dir: /workspace
+    depends_on:
+      directus:
+        condition: service_healthy
+    ports:
+      - '${CARPOOL_PORT:-5173}:5173'
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 5173
+      DIRECTUS_URL: http://directus:8055
+      DIRECTUS_TOKEN: ${DIRECTUS_TOKEN:-}
+      WORDPRESS_INTEGRATION_ENABLED: ${WORDPRESS_INTEGRATION_ENABLED:-true}
+      WORDPRESS_ISSUER: ${WORDPRESS_ISSUER:-https://www.ligerbots.org}
+      WORDPRESS_AUDIENCE: ${WORDPRESS_AUDIENCE:-carpool-provisioning}
+      WORDPRESS_KEY_ID: ${WORDPRESS_KEY_ID:-wordpress-development}
+      WORDPRESS_PUBLIC_KEY_PATH: /workspace/.local/wordpress/carpool-wordpress-public.pem
+      WORDPRESS_CLOCK_SKEW_SECONDS: ${WORDPRESS_CLOCK_SKEW_SECONDS:-5}
+      WORDPRESS_LAUNCH_TTL_SECONDS: ${WORDPRESS_LAUNCH_TTL_SECONDS:-60}
+      WORDPRESS_MAX_REQUEST_BYTES: ${WORDPRESS_MAX_REQUEST_BYTES:-16384}
+      WORDPRESS_PROVISIONING_STORE: ${WORDPRESS_PROVISIONING_STORE:-memory}
+      WORDPRESS_LAUNCH_DESTINATION: ${WORDPRESS_LAUNCH_DESTINATION:-/}
+      WORDPRESS_SIMULATOR_URL: ${WORDPRESS_SIMULATOR_URL:-http://localhost:8080/}
+      CARPOOL_SESSION_COOKIE: ${CARPOOL_SESSION_COOKIE:-carpool_session}
+      CARPOOL_SESSION_IDLE_TIMEOUT_SECONDS: ${CARPOOL_SESSION_IDLE_TIMEOUT_SECONDS:-1800}
+      CARPOOL_SESSION_ABSOLUTE_TIMEOUT_SECONDS: ${CARPOOL_SESSION_ABSOLUTE_TIMEOUT_SECONDS:-28800}
+      CARPOOL_SESSION_SECURE: ${CARPOOL_SESSION_SECURE:-false}
+      CARPOOL_DEV_USER_ID: ${CARPOOL_DEV_USER_ID:-}
+      CARPOOL_DEV_USER_NAME: ${CARPOOL_DEV_USER_NAME:-}
+      CARPOOL_DEV_USER_ROLE: ${CARPOOL_DEV_USER_ROLE:-}
+    volumes:
+      - .:/workspace
+      - carpool-node-modules:/workspace/node_modules
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://localhost:5173/').then((response) =>
+          process.exit(response.status < 500 ? 0 : 1)).catch(() => process.exit(1))
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    command: >-
+      sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm exec vite dev --host 0.0.0.0"
+
+  wordpress-simulator:
+    image: node:22-alpine
+    working_dir: /workspace
+    depends_on:
+      carpool:
+        condition: service_healthy
+    ports:
+      - '${WORDPRESS_SIMULATOR_PORT:-8080}:8080'
+    environment:
+      WORDPRESS_SIMULATOR_HOST: 0.0.0.0
+      WORDPRESS_SIMULATOR_PORT: 8080
+      WORDPRESS_SIMULATOR_INTEGRATION_ENABLED: ${WORDPRESS_SIMULATOR_INTEGRATION_ENABLED:-true}
+      WORDPRESS_SIMULATOR_ISSUER: ${WORDPRESS_SIMULATOR_ISSUER:-https://www.ligerbots.org}
+      WORDPRESS_SIMULATOR_AUDIENCE: ${WORDPRESS_SIMULATOR_AUDIENCE:-carpool-provisioning}
+      WORDPRESS_SIMULATOR_PROVISIONING_URL: http://carpool:5173/api/integration/wordpress/provision
+      WORDPRESS_SIMULATOR_LAUNCH_URL: ${WORDPRESS_SIMULATOR_LAUNCH_URL:-http://localhost:5173/launch}
+      WORDPRESS_SIMULATOR_CARPOOL_URL: ${WORDPRESS_SIMULATOR_CARPOOL_URL:-http://localhost:5173/}
+      WORDPRESS_SIMULATOR_PRIVATE_KEY_PATH: /workspace/.local/wordpress/carpool-wordpress-private.pem
+      WORDPRESS_SIMULATOR_KEY_ID: ${WORDPRESS_SIMULATOR_KEY_ID:-wordpress-development}
+      WORDPRESS_SIMULATOR_USER_PREFIX: ${WORDPRESS_SIMULATOR_USER_PREFIX:-}
+    volumes:
+      - .:/workspace:ro
+    command: node wordpress/simulator/server.mjs
 
 volumes:
   directus-uploads:
   postgres-data:
+  carpool-node-modules:

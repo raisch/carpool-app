@@ -46,12 +46,10 @@ deferred, but the application will use an explicit identity-provider boundary
 and will enforce authorization on the server.
 
 The production WordPress authentication strategy is documented in
-[`design/wordpress-integration-design.md`](./design/wordpress-integration-design.md). For a
-local navigation-only simulation, run the Carpool app and then start:
-
-```sh
-pnpm wordpress:simulator
-```
+[`design/wordpress-integration-design.md`](./design/wordpress-integration-design.md). The
+development Docker Compose stack includes the SvelteKit app and the local
+WordPress-like simulator, so the complete local handoff can be started with
+one command.
 
 Open <http://localhost:8080>, choose a demo user, and select **Resources /
 Carpools**. The simulator does not establish production authentication; it
@@ -95,11 +93,10 @@ Important variables include:
 | `POSTGRES_USER`           | PostgreSQL username                               |
 | `POSTGRES_PASSWORD`       | PostgreSQL password                               |
 
-`DIRECTUS_TOKEN` is not used by Docker Compose. It is consumed only by the
-SvelteKit server-side Directus repository client and must never be exposed
-through browser code.
+`DIRECTUS_TOKEN` is passed only to the SvelteKit server-side Directus repository
+client by Docker Compose and must never be exposed through browser code.
 
-Before opening the app in Chrome, start Directus/PostgreSQL, apply the schema,
+Before opening the app in Chrome, start the development stack, apply the schema,
 and set a local Directus API token in `.env`:
 
 ```sh
@@ -108,9 +105,8 @@ pnpm directus:migrate
 ```
 
 Create a Directus static token for the local server in the Directus admin UI at
-<http://localhost:8055>, then set `DIRECTUS_TOKEN=<token>` in `.env`. The dev
-and preview scripts load `.env` automatically. Restart `pnpm dev` after editing
-the file, then open <http://localhost:5173>.
+<http://localhost:8055>, then set `DIRECTUS_TOKEN=<token>` in `.env`. Restart
+the Compose stack after editing the file, then open <http://localhost:5173>.
 
 ## Local Directus and PostgreSQL
 
@@ -125,8 +121,15 @@ This starts:
 - PostgreSQL 16 on the private Compose network;
 - Directus connected to PostgreSQL by the `postgres` service name;
 - Directus on <http://localhost:8055>;
+- the SvelteKit development server on <http://localhost:5173>;
+- the WordPress simulator on <http://localhost:8080>;
 - persistent named volumes for PostgreSQL data, Directus uploads, and
-  extensions.
+  extensions and the app's container-side `node_modules`.
+
+The app uses `http://directus:8055` for its server-side Directus connection.
+The simulator uses `http://carpool:5173` for provisioning, while its browser
+redirects continue to use `localhost` URLs. The Compose file is development
+only; production will use a separate Compose configuration.
 
 Check service status:
 
@@ -195,11 +198,14 @@ Use `down -v` only when deleting local development data is acceptable.
 
 ## Development commands
 
-Start the SvelteKit development server:
+Start the full development stack, including SvelteKit and the WordPress
+simulator:
 
 ```sh
-pnpm dev
+pnpm docker:up
 ```
+
+To run only the SvelteKit process outside Docker, use `pnpm dev`.
 
 Run type checking and Svelte diagnostics:
 
