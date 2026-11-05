@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
+	import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
 	import type {
 		EventDetailsDto,
 		IdentityState,
@@ -28,12 +29,16 @@
 	let pending = $state(false);
 	let feedback = $state('');
 	let feedbackKind = $state<'success' | 'error' | ''>('');
+	let savingForNavigation = $state(false);
 
 	const canSubmit = $derived(identity.status === 'configured' && !pending);
 	const serverOutboundSelection = $derived(selectionFor(details.currentTransportation.outbound));
 	const serverReturnSelection = $derived(selectionFor(details.currentTransportation.return));
 	const outboundSelection = $derived(outboundOverride ?? serverOutboundSelection);
 	const returnSelection = $derived(returnOverride ?? serverReturnSelection);
+	const hasUnsavedChanges = $derived(
+		outboundSelection !== serverOutboundSelection || returnSelection !== serverReturnSelection
+	);
 	const expectedUpdatedAt = $derived(
 		[
 			details.currentTransportation.outbound?.updatedAt,
@@ -65,14 +70,13 @@
 			: { decision: 'ride', tripRideId: selection };
 	}
 
-	async function submit(event: SubmitEvent): Promise<void> {
-		event.preventDefault();
+	async function saveChoices(): Promise<boolean> {
 		clearFeedback();
 
 		if (identity.status !== 'configured') {
 			feedback = 'Transportation saving is unavailable until identity integration is connected.';
 			feedbackKind = 'error';
-			return;
+			return false;
 		}
 
 		const outbound = choiceFromSelection(outboundSelection);
@@ -80,7 +84,7 @@
 		if (!outbound || !returning) {
 			feedback = 'Choose a ride or opt out for both directions before saving.';
 			feedbackKind = 'error';
-			return;
+			return false;
 		}
 
 		pending = true;
@@ -109,7 +113,7 @@
 					returnOverride = null;
 					await invalidateAll();
 				}
-				return;
+				return false;
 			}
 
 			outboundOverride = null;
@@ -117,19 +121,59 @@
 			feedback = 'Transportation status saved for both directions.';
 			feedbackKind = 'success';
 			await invalidateAll();
+			return true;
 		} catch {
 			feedback = 'The transportation update could not be completed. Refresh and try again.';
 			feedbackKind = 'error';
+			return false;
 		} finally {
 			pending = false;
 		}
 	}
+
+	async function submit(event: SubmitEvent): Promise<void> {
+		event.preventDefault();
+		await saveChoices();
+	}
+
+	onMount(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent): void => {
+			if (!hasUnsavedChanges || savingForNavigation) return;
+			event.preventDefault();
+			event.returnValue = '';
+		};
+
+		window.addEventListener('beforeunload', handleBeforeUnload);
+		return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+	});
+
+	beforeNavigate((navigation) => {
+		if (!hasUnsavedChanges || savingForNavigation || navigation.type === 'leave') return;
+		if (!navigation.to) return;
+		const destination = navigation.to;
+
+		navigation.cancel();
+		if (!window.confirm('Save your transportation choices before leaving this page?')) return;
+
+		void (async () => {
+			savingForNavigation = true;
+			const saved = await saveChoices();
+			savingForNavigation = false;
+			if (!saved) return;
+
+			if (destination.route === null) {
+				window.location.assign(destination.url);
+			} else {
+				await goto(destination.url);
+			}
+		})();
+	});
 </script>
 
 <section class="mt-8" aria-labelledby="transportation-heading">
 	<div class="legacy-panel-heading flex flex-wrap items-end justify-between gap-3">
 		<div>
-			<h2 id="transportation-heading" class="font-semibold">Transportation status</h2>
+			<h2 id="transportation-heading" class="font-semibold">Transportation options</h2>
 			<p class="mt-1 text-sm text-blue-100">Choose one ride, or opt out, for each direction.</p>
 		</div>
 		{#if identity.status !== 'configured'}
@@ -236,7 +280,7 @@
 				disabled={!canSubmit}
 				class="legacy-action legacy-action-primary disabled:cursor-not-allowed disabled:opacity-60"
 			>
-				{pending ? 'Saving…' : 'Save transportation status'}
+				{pending ? 'Saving…' : 'Save transportation choices'}
 			</button>
 			{#if feedback}
 				<p

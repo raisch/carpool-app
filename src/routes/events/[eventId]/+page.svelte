@@ -70,8 +70,9 @@
 						>
 							<a
 								class="legacy-action"
-								href={resolve('/events/[eventId]/riders', { eventId: data.eventId })}
-								>Rider print view</a
+								href={`${resolve('/events/[eventId]/riders', { eventId: data.eventId })}?print=1`}
+								target="_blank"
+								rel="noreferrer">Rider print view</a
 							>
 							<a
 								class="legacy-action"

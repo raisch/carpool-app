@@ -141,6 +141,8 @@ export interface AdminTripDto extends TripDto {
 export interface AdminEventDto {
 	event: EventSummaryDto;
 	trips: AdminTripDto[];
+	/** Optional for compatibility with existing fixtures and aggregate callers. */
+	transportationDecisions?: TransportationDecisionDto[];
 }
 
 export interface AdminTripRideDto {

@@ -69,8 +69,9 @@
 			<div class="flex flex-wrap gap-3">
 				<a
 					class="text-sm font-semibold text-blue-700 hover:underline"
-					href={resolve('/events/[eventId]/riders', { eventId: data.details.event.id })}
-					>Rider print view</a
+					href={`${resolve('/events/[eventId]/riders', { eventId: data.details.event.id })}?print=1`}
+					target="_blank"
+					rel="noreferrer">Rider print view</a
 				>
 				<a
 					class="text-sm font-semibold text-blue-700 hover:underline"

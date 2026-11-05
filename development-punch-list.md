@@ -1,255 +1,312 @@
-# Standalone carpool development punch list
+# Standalone carpool visual and interaction punch list
 
-## Scope
+## Objective
 
-This list defines the remaining work to make the standalone carpool app feel
-as close as practical to the carpool experience in
-`../ligerbots-carpool-app`.
+Make `carpool-app` look and feel as close as possible to the carpool
+experience in `../ligerbots-carpool-app`.
 
-The app is **not** intended to recreate the legacy site's public-site framing.
-The carpool app itself is the landing page. Do not add the legacy blog,
-announcements, calendar, social feeds, sponsor portal, public-site masthead, or
-unrelated directory pages unless a later product decision expands the scope.
+The target is **observable parity**. A returning user should recognize the
+same visual language, information hierarchy, terminology, control placement,
+feedback patterns, and task flow.
 
-Preserve the new app's TypeScript/SvelteKit implementation, Directus
-persistence, WordPress identity hand-off, server-side authorization,
-accessibility behavior, and explicit loading/error states.
+This list deliberately does not require copying the legacy app's architecture,
+URLs, framework patterns, data model, CSS framework, server implementation, or
+technical limitations. The new app may use different technical solutions as
+long as the user-facing result is equivalent or better.
 
-## Required changes
+## Required visual changes
 
-### Standalone carpool shell
+### Overall page composition
 
-- [ ] Keep the application focused on carpool and make the event list the
-  landing page.
-- [ ] Replace the current generic utility navigation with a compact,
-  carpool-specific navigation that exposes only relevant destinations:
-  events, vehicles, users/admin functions, and return to the simulator when
-  available.
-- [ ] Retain the LigerBots visual identity where it helps users recognize the
-  app, but do not reproduce the legacy public site's full masthead/social
-  navigation.
-- [ ] Decide whether the existing [SiteMasthead.svelte](./src/lib/components/SiteMasthead.svelte)
-  and [SiteFooter.svelte](./src/lib/components/SiteFooter.svelte)
-  should remain as a lightweight app brand bar or be replaced with a smaller
-  standalone carpool header.
-- [ ] Make the selected navigation item, signed-in user, role, logout action,
-  and simulator return link visible and consistent on every route.
-- [ ] Add an accessible responsive menu for narrow screens with explicit
-  expanded/collapsed state.
-- [ ] Preserve the skip link, focus styles, semantic landmarks, and keyboard
-  access while changing the visual treatment.
+- [ ] Reproduce the legacy carpool page proportions:
+  - centered content area,
+  - wide desktop layout,
+  - narrower readable content column,
+  - deliberate outer margins,
+  - compact vertical rhythm.
+- [ ] Reproduce the legacy page background treatment:
+  - light photographic or textured background,
+  - white/light content surface,
+  - subtle top fade or shading,
+  - clear separation between page background and application content.
+- [ ] Match the legacy content frame's border, radius, shadow, and panel
+  spacing.
+- [ ] Avoid the current generic SaaS appearance:
+  - oversized hero headings,
+  - excessive rounded corners,
+  - large empty areas,
+  - floating card grids with unrelated card styling.
+- [ ] Establish shared visual tokens for team blue, dark blue hover states,
+  panel borders, panel shadows, neutral backgrounds, typography, spacing, and
+  control heights.
 
-### Standalone visual language
+### Brand header
 
-- [ ] Define shared visual tokens in
-  [layout.css](./src/routes/layout.css):
-  team blue, darker hover blue, neutral backgrounds, borders, panel shadow,
-  radius, content width, typography, and spacing.
-- [ ] Recreate the legacy carpool visual language without importing the entire
-  legacy Bootstrap/CSS runtime:
-  - blue panel headings,
-  - bordered white panel bodies,
-  - modest corner radii,
-  - compact labels and metadata,
-  - conventional primary/secondary/danger buttons,
-  - visible but restrained shadows,
-  - dense, information-oriented spacing.
-- [ ] Add reusable panel, panel-heading, panel-body, status-panel, action
-  button, metadata-row, form-row, and dialog styles/components.
-- [ ] Remove inconsistent one-off combinations of Tailwind classes and local
-  button styles from the carpool screens.
-- [ ] Match the legacy carpool typography and heading hierarchy without
-  retaining unrelated public-site page treatments.
-- [ ] Ensure the visual system works at desktop, tablet, and phone widths.
+- [ ] Recreate the recognizable LigerBots brand header from
+  `../ligerbots-carpool-app`, adapted to a standalone carpool product.
+- [ ] Match the logo/wordmark proportions, alignment, padding, and visual
+  weight.
+- [ ] Include the team identity prominently enough that the app feels like a
+  LigerBots application immediately on arrival.
+- [ ] Keep external brand/social links only if they improve the standalone
+  app's presentation; do not make them a prerequisite for navigation.
+- [ ] Make the header responsive without shrinking the logo into an unusable
+  mark.
+- [ ] Use meaningful image alternatives and preserve visible keyboard focus.
 
-### Event landing page
+### Carpool navigation
 
-- [ ] Restyle [src/routes/+page.svelte](./src/routes/+page.svelte)
-  so the app opens directly to a compact “Carpool events” or “Upcoming
-  carpool events” panel rather than a modern marketing-style hero.
-- [ ] Convert [EventCard.svelte](./src/lib/components/EventCard.svelte)
-  from a rounded modern card into a legacy-style event panel.
-- [ ] Show the same high-value event information as the legacy app:
-  event name, date range, location, description, and transportation action.
-- [ ] Use familiar action labels such as “View trips,” “Edit event,” and
-  “Delete event.”
-- [ ] Keep admin actions close to the event list and visually group create,
-  edit, and delete controls.
-- [ ] Preserve the existing empty, error, loading, identity, and invalid-launch
-  behavior while presenting each state inside the shared panel vocabulary.
-- [ ] Keep the event list responsive: two columns where appropriate and one
-  column on narrow screens.
-- [ ] Match the legacy density and avoid oversized headings, excessive padding,
-  and large rounded cards.
+- [ ] Recreate the legacy navigation bar's appearance:
+  - team-blue background,
+  - compact height,
+  - rounded upper corners where appropriate,
+  - subtle shadow,
+  - familiar text sizing,
+  - clear hover and selected states.
+- [ ] Present carpool destinations in the same practical order users expect:
+  events first, followed by transportation, vehicles, rider/admin tools, and
+  account actions as applicable.
+- [ ] Use familiar labels such as “Carpool,” “Events,” “Vehicles,” “Rider
+  list,” “Users,” “Login,” and “Logout,” adjusted only where needed for
+  clarity.
+- [ ] Keep role-specific actions visible in the same navigation context as
+  the legacy app.
+- [ ] Add a compact, accessible mobile navigation that preserves the same
+  hierarchy and terminology.
+- [ ] Show the current section clearly without relying on color alone.
 
-### Event details and trip hierarchy
+### Shared panels and controls
 
-- [ ] Rework
+- [ ] Replace inconsistent page-specific containers with a shared legacy-style
+  panel treatment:
+  - blue heading strip,
+  - white body,
+  - thin border,
+  - restrained radius,
+  - subtle drop shadow.
+- [ ] Create consistent heading levels and panel title spacing.
+- [ ] Match the legacy primary, secondary, neutral, and destructive button
+  appearance.
+- [ ] Match button height, padding, capitalization, icon placement, hover
+  states, disabled states, and focus states.
+- [ ] Use compact links and action rows instead of large modern card buttons
+  where the legacy app uses inline actions.
+- [ ] Standardize form fields, labels, required indicators, help text,
+  validation text, and field spacing.
+- [ ] Use the same panel treatment for normal content, empty states, errors,
+  warnings, confirmations, and success messages.
+
+## Required carpool screen changes
+
+### Landing page
+
+- [ ] Make the event list the unmistakable landing experience for the
+  standalone application.
+- [ ] Restyle [src/routes/+page.svelte](./src/routes/+page.svelte) as a
+  compact carpool dashboard rather than a marketing landing page.
+- [ ] Use a prominent legacy-style panel heading such as “Carpool Events” or
+  “Upcoming Events.”
+- [ ] Match the legacy event-list density and scanning behavior.
+- [ ] Present each event with:
+  - event name,
+  - date range,
+  - location,
+  - description,
+  - transportation/trip action,
+  - contextual administrative actions when appropriate.
+- [ ] Restyle [EventCard.svelte](./src/lib/components/EventCard.svelte) as a
+  legacy event panel rather than a large rounded card.
+- [ ] Use a familiar “View trips” or equivalent primary action.
+- [ ] Place create/edit/delete actions beside or within the event panel in the
+  same way a legacy user would expect.
+- [ ] Keep events in a responsive two-column desktop arrangement where space
+  allows and a single-column mobile arrangement.
+- [ ] Ensure no event, loading, error, identity, and invalid-launch states use
+  the same visual frame as the event list.
+
+### Event details
+
+- [ ] Restyle
   [src/routes/events/[eventId]/+page.svelte](./src/routes/events/[eventId]/+page.svelte)
-  around the legacy hierarchy:
+  to match the legacy event-details screen.
+- [ ] Put the event name and key event metadata in a compact header panel.
+- [ ] Preserve the legacy information order:
   1. event summary,
-  2. outbound trip,
-  3. return trip,
-  4. rides within each trip,
-  5. riders within each ride.
-- [ ] Make outbound and return transportation visually distinct and easy to
-  scan.
+  2. outbound transportation,
+  3. return transportation,
+  4. rides,
+  5. riders.
+- [ ] Use clear section headings for outbound and return trips.
+- [ ] Keep event actions close to the event summary rather than in a
+  disconnected toolbar.
+- [ ] Use compact back/navigation actions in the same visual style as the rest
+  of the page.
+- [ ] Show empty trip sections and unavailable transportation clearly without
+  collapsing the surrounding hierarchy.
+
+### Trips and rides
+
 - [ ] Update [TripRideCard.svelte](./src/lib/components/TripRideCard.svelte)
-  to show driver, vehicle, destination, timing, capacity, open seats, and
-  current riders in a predictable order.
-- [ ] Match legacy labels for trip direction, ride status, available seats,
-  full rides, unassigned riders, and opt-outs.
-- [ ] Keep the event summary compact and place event-level actions in the
-  surrounding panel rather than in a separate dashboard.
-- [ ] Provide clear back navigation to the event list and preserve deep-link
-  behavior.
+  to visually resemble the legacy ride/trip blocks.
+- [ ] Present each ride as a compact, scannable section rather than a generic
+  application card.
+- [ ] Show information in the legacy reading order:
+  - driver,
+  - vehicle,
+  - destination or trip direction,
+  - departure/return time,
+  - capacity,
+  - open seats,
+  - riders.
+- [ ] Make full rides, rides with open seats, cancelled rides, and unavailable
+  rides visually distinct.
+- [ ] Keep driver and vehicle details close to the ride they describe.
+- [ ] Place join, leave, edit, and manage actions directly beside the affected
+  ride.
+- [ ] Match the legacy wording for joining, leaving, changing, and managing a
+  ride.
+- [ ] Make ride sections work cleanly on narrow screens without hiding key
+  capacity or rider information.
 
-### Signup and transportation behavior
+### Signup and transportation selection
 
-- [ ] Ensure a user can choose outbound transportation, return transportation,
-  both, or opt out, matching the legacy workflow.
-- [ ] Allow users to edit an existing signup from the event context without
-  losing the event/trip view.
-- [ ] Match the legacy form field order, labels, defaults, confirmation
-  feedback, and post-save behavior.
-- [ ] Keep the existing server-side validation and authorization as the source
-  of truth.
-- [ ] Present success, validation, and server failures in visible,
-  actionable, accessible feedback.
-- [ ] Avoid browser-default alerts or silent refreshes where an inline status
-  or accessible dialog is more appropriate.
-- [ ] Preserve behavior for users with no available rides, full rides, no
-  vehicle, or incomplete identity integration.
+- [ ] Make the signup flow feel like the legacy inline workflow.
+- [ ] Allow a user to select outbound transportation, return transportation,
+  both, or no transportation.
+- [ ] Allow an existing signup to be changed from the event context.
+- [ ] Match the legacy field order, labels, defaults, action buttons, and
+  confirmation messaging.
+- [ ] Keep the user on the relevant event/trip context after saving.
+- [ ] Show clear feedback for saved, changed, rejected, and failed actions.
+- [ ] Replace generic browser alerts with consistent visible feedback or
+  accessible dialogs.
+- [ ] Make unavailable, full, opted-out, and incomplete choices understandable
+  without requiring users to inspect technical details.
 
-### Ride and admin management
-
-- [ ] Add contextual admin controls to create, edit, and remove trips and
-  rides.
-- [ ] Support driver and vehicle assignment from the event workflow where the
-  legacy app supports it.
-- [ ] Keep routine ride changes on the event page or in an adjacent dialog;
-  do not require unnecessary navigation to a separate administration area.
-- [ ] Use consistent accessible dialogs for create/edit and destructive
-  actions.
-- [ ] Require explicit confirmation before deleting events, trips, rides,
-  vehicles, or rider assignments.
-- [ ] Show operation-in-progress, success, and failure states without
-  allowing duplicate submissions.
-
-### Rider and attendee management
+### Rider lists and attendee management
 
 - [ ] Update [RiderManagement.svelte](./src/lib/components/RiderManagement.svelte)
   and
   [src/routes/events/[eventId]/riders/+page.svelte](./src/routes/events/[eventId]/riders/+page.svelte)
-  to match the legacy rider-list grouping by trip and ride.
-- [ ] Show rider name, ride, driver, vehicle, capacity, and assignment status
-  in the legacy scan order.
-- [ ] Add/remove a rider from a ride.
-- [ ] Move a rider between rides.
-- [ ] Support unassigning a rider and restoring the rider to an unassigned
-  state.
-- [ ] Show opt-outs and attendees in the same context as the legacy carpool
-  workflow where those views are part of the supported product.
-- [ ] Add confirmation and actionable failure feedback for rider changes.
-- [ ] Keep all rider-management permissions enforced by server handlers.
-- [ ] Retain export access from the event/rider context if the legacy workflow
-  provides it.
+  to match the legacy rider-list presentation.
+- [ ] Group riders by trip and ride in the same visual hierarchy as the legacy
+  app.
+- [ ] Use compact rider rows with clear driver, vehicle, and seat context.
+- [ ] Distinguish assigned riders, unassigned riders, attendees, and opt-outs.
+- [ ] Place rider actions next to the rider or ride they affect.
+- [ ] Support the same observable management tasks:
+  - add a rider,
+  - remove a rider,
+  - move a rider,
+  - unassign a rider,
+  - review rider/attendee status.
+- [ ] Use inline forms or focused dialogs that resemble the old app's
+  create/modify behavior.
+- [ ] Add clear confirmation, cancellation, success, and failure feedback.
+- [ ] Keep long rider lists readable and scannable on mobile.
 
-### Vehicle management
+### Admin event and ride workflows
 
-- [ ] Restyle [src/routes/vehicles/+page.svelte](./src/routes/vehicles/+page.svelte),
-  vehicle detail, create, and edit pages using the same compact legacy panel
-  and form treatment.
-- [ ] Match legacy vehicle labels and field order for driver, capacity,
-  description, availability, and ownership.
-- [ ] Allow drivers to manage their own vehicle using the same role-aware
-  navigation pattern as the legacy app.
-- [ ] Allow administrators to view, edit, and remove vehicles where permitted.
-- [ ] Show vehicle usage or assigned rides when that context is needed to make
-  the workflow equivalent to the legacy app.
-- [ ] Match validation messages, required indicators, save/cancel actions,
-  confirmation behavior, and post-save navigation.
+- [ ] Make create and edit workflows feel like the legacy
+  create/modify forms, whether implemented as panels, dialogs, or routes.
+- [ ] Match legacy form layout, field grouping, labels, button order, and
+  confirmation behavior.
+- [ ] Keep event and ride creation close to the list or detail view where the
+  legacy workflow places it.
+- [ ] Make destructive actions visibly dangerous and require deliberate
+  confirmation.
+- [ ] Show progress and completion feedback in the same context as the action.
+- [ ] Prevent duplicate submissions and preserve entered values after
+  validation failures.
 
-### User, identity, and role behavior
+### Vehicle screens
 
-- [ ] Match the legacy login/logout labels and placement within the standalone
-  carpool shell.
-- [ ] Make signed-out, authenticated rider, driver, admin, invalid-launch, and
-  identity-not-configured states visually consistent with the rest of the app.
-- [ ] Compare [src/routes/users/+page.svelte](./src/routes/users/+page.svelte)
-  with the legacy user-management behavior and add only carpool-relevant
-  user/role actions.
-- [ ] Do not reproduce unrelated public directory or site-account features.
-- [ ] Continue hiding unavailable controls for usability, but never rely on
-  hidden controls as the security boundary.
+- [ ] Restyle [src/routes/vehicles/+page.svelte](./src/routes/vehicles/+page.svelte)
+  and all vehicle detail/create/edit screens to match the legacy vehicle
+  pages.
+- [ ] Use the same panel, table/list, form, and action-button vocabulary as
+  event and rider screens.
+- [ ] Match the legacy field labels and visual order for driver, vehicle,
+  capacity, description, and availability.
+- [ ] Keep driver-owned vehicle actions and administrator actions visually
+  distinct but consistent.
+- [ ] Show vehicle assignments or usage beside the vehicle when that context
+  is needed to complete transportation planning.
+- [ ] Match save, cancel, edit, delete, validation, and confirmation behavior.
 
-### Route and terminology compatibility
+### User and account presentation
 
-- [ ] Decide which legacy carpool URLs must remain valid:
-  - `/carpool`
-  - `/carpool/:id`
-  - `/carpool/:id/riderlist`
-  - `/carpool/:id/attendees`
-  - `/carpool/vehicles`
-  - `/carpool/vehicle/:id`
-- [ ] Add redirects or compatibility routes for any required old bookmarks,
-  WordPress links, simulator links, or shared URLs.
-- [ ] Align route titles, page headings, button labels, and status messages with
-  legacy carpool terminology.
-- [ ] Document intentional URL or terminology differences.
+- [ ] Make signed-out, signed-in, driver, rider, and administrator states look
+  like variations of the same application rather than separate modern screens.
+- [ ] Match the legacy placement and wording of login/logout/account actions.
+- [ ] Restyle [src/routes/users/+page.svelte](./src/routes/users/+page.svelte)
+  using the same compact list and panel treatment.
+- [ ] Show role and transportation-relevant user information in the same
+  practical, scan-friendly style as the legacy app.
+- [ ] Keep unavailable actions hidden or clearly unavailable in the same
+  manner as the old user experience.
 
-### Verification
+## Required responsive and accessibility work
 
-- [ ] Capture side-by-side screenshots for:
-  - standalone landing/event list,
+- [ ] Compare desktop, tablet, and phone layouts against the legacy carpool
+  screens, not just against the current app.
+- [ ] Preserve the legacy information order when panels collapse to one
+  column.
+- [ ] Ensure event names, descriptions, rider names, and validation messages
+  wrap without damaging layout.
+- [ ] Make all navigation, forms, dialogs, confirmations, and ride actions
+  keyboard accessible.
+- [ ] Preserve visible focus indicators while matching the legacy colors.
+- [ ] Use semantic headings, landmarks, labels, and status announcements.
+- [ ] Ensure color is not the only signal for active, full, dangerous, or
+  unavailable states.
+- [ ] Verify sufficient contrast for the blue panel headings and button
+  combinations.
+
+## Required parity validation
+
+- [ ] Capture side-by-side screenshots of:
+  - landing/event list,
   - event details,
   - outbound and return trips,
+  - ride with open seats,
+  - full ride,
   - rider list,
-  - vehicle list/detail,
+  - vehicle list,
   - create/edit forms,
-  - signed-out state,
-  - rider state,
-  - driver state,
-  - admin state,
-  - mobile layout.
-- [ ] Extend the existing visual coverage in
-  [milestone1-visual.e2e.ts](./src/routes/milestone1-visual.e2e.ts)
-  with the event/trip/rider and vehicle screens.
-- [ ] Add behavioral tests for:
-  - event selection,
-  - outbound/return signup,
-  - opt-out,
-  - editing a signup,
-  - joining/leaving a ride,
-  - adding/moving/removing riders,
-  - creating/editing/deleting events,
-  - creating/editing/deleting vehicles,
-  - login/logout and simulator return behavior.
-- [ ] Add keyboard and accessibility tests for navigation, panels, forms,
-  dialogs, confirmation flows, and status messages.
-- [ ] Add route compatibility tests for every retained legacy URL.
+  - signed-out view,
+  - rider view,
+  - driver view,
+  - administrator view,
+  - mobile layouts.
+- [ ] Extend
+  [src/routes/milestone1-visual.e2e.ts](./src/routes/milestone1-visual.e2e.ts)
+  with visual coverage for the remaining carpool screens.
+- [ ] Add behavior checks for:
+  - opening an event,
+  - selecting outbound and return rides,
+  - opting out,
+  - changing a signup,
+  - joining and leaving a ride,
+  - adding, moving, and removing riders,
+  - creating and editing events,
+  - creating and editing vehicles,
+  - confirming and cancelling destructive actions.
+- [ ] Test all flows with representative signed-out, rider, driver, and
+  administrator states.
+- [ ] Review every screen for consistent panel styling, typography, spacing,
+  button treatment, terminology, and feedback.
 - [ ] Run type checking, linting, unit tests, Playwright tests, visual
-  snapshots, and release-verification scripts.
-- [ ] Test with representative signed-out, rider, driver, and admin
-  identities.
-
-## Explicitly out of scope
-
-- [ ] Do **not** recreate the legacy site's full public masthead and social
-  navigation.
-- [ ] Do **not** add announcements, blog posts, public calendar blocks,
-  Twitter/social embeds, sponsor portal blocks, or unrelated public content to
-  the carpool landing page.
-- [ ] Do **not** copy the legacy app's server modules or historical data-access
-  implementation.
-- [ ] Do **not** weaken the new app's identity, authorization, validation,
-  accessibility, or error-handling behavior for visual similarity.
+  snapshots, and release verification after the visual changes are complete.
 
 ## Completion criteria
 
-The standalone app is close enough to the legacy carpool app when a returning
-user can recognize the same event/trip/ride/rider information hierarchy, use
-the same signup and management workflows, understand the same labels and
-statuses, and complete the same tasks without learning a substantially
-different interaction model. The app should still clearly be a focused
-carpool product rather than a copy of the legacy public website.
+The work is complete when a user familiar with the legacy carpool app can
+recognize the standalone app immediately, scan events and transportation
+options in the same order, understand the same labels and statuses, and
+complete the same rider, driver, and administrator tasks without learning a
+substantially different interaction model.
+
+Technical differences are acceptable. Noticeable differences in visual
+hierarchy, control placement, terminology, task flow, responsive behavior, or
+feedback are not.

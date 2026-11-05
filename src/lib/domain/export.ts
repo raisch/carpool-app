@@ -1,4 +1,4 @@
-import type { AdminEventDto, Direction } from './types';
+import type { AdminEventDto, Direction, TransportationDecisionDto } from './types';
 
 export interface EventRiderExportRow {
 	eventId: string;
@@ -20,6 +20,42 @@ export interface EventRiderExportRow {
 }
 
 const directionOrder: Record<Direction, number> = { outbound: 0, return: 1 };
+const directions: Direction[] = ['outbound', 'return'];
+
+/**
+ * Returns riders who have no assigned ride and no explicit opt-out in at least
+ * one direction. Missing decision data is treated as no decision.
+ */
+export function incompleteRiderIds(event: AdminEventDto): Set<string> {
+	const assignedDirections = new Map<string, Set<Direction>>();
+	for (const trip of event.trips) {
+		for (const ride of trip.rides) {
+			for (const rider of ride.riders) {
+				const riderDirections = assignedDirections.get(rider.id) ?? new Set<Direction>();
+				riderDirections.add(trip.direction);
+				assignedDirections.set(rider.id, riderDirections);
+			}
+		}
+	}
+
+	const optOutDirections = new Map<string, Set<Direction>>();
+	for (const decision of event.transportationDecisions ?? []) {
+		if (decision.decision !== 'opt_out') continue;
+		const riderDirections = optOutDirections.get(decision.userId) ?? new Set<Direction>();
+		riderDirections.add(decision.direction);
+		optOutDirections.set(decision.userId, riderDirections);
+	}
+
+	return new Set(
+		[...assignedDirections.keys()].filter((riderId) =>
+			directions.some(
+				(direction) =>
+					!assignedDirections.get(riderId)?.has(direction) &&
+					!optOutDirections.get(riderId)?.has(direction)
+			)
+		)
+	);
+}
 
 /**
  * Flatten one already-scoped event aggregate into deterministic rider rows.

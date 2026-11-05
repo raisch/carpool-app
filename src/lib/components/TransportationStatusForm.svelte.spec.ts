@@ -90,12 +90,12 @@ describe('TransportationStatusForm', () => {
 		render(TransportationStatusForm, { eventId: 'event-1', details, identity: configured });
 
 		await expect
-			.element(page.getByRole('heading', { name: 'Transportation status' }))
+			.element(page.getByRole('heading', { name: 'Transportation options' }))
 			.toBeVisible();
 		await expect.element(page.getByText('Full', { exact: true })).toBeVisible();
 		await expect.element(page.getByRole('radio', { name: /Full car/ })).toBeDisabled();
 		await expect
-			.element(page.getByRole('button', { name: 'Save transportation status' }))
+			.element(page.getByRole('button', { name: 'Save transportation choices' }))
 			.toBeEnabled();
 
 		const outboundOptOut = page.getByLabelText('I do not need outbound transportation');
@@ -115,10 +115,26 @@ describe('TransportationStatusForm', () => {
 		});
 
 		await expect
-			.element(page.getByRole('button', { name: 'Save transportation status' }))
+			.element(page.getByRole('button', { name: 'Save transportation choices' }))
 			.toBeDisabled();
 		await expect
 			.element(page.getByLabelText('I do not need outbound transportation'))
 			.toBeDisabled();
+	});
+
+	it('prompts before browser unload after a choice changes', async () => {
+		render(TransportationStatusForm, { eventId: 'event-1', details, identity: configured });
+
+		const unchangedEvent = new Event('beforeunload', { cancelable: true });
+		window.dispatchEvent(unchangedEvent);
+		expect(unchangedEvent.defaultPrevented).toBe(false);
+
+		const outboundOptOut = page.getByLabelText('I do not need outbound transportation');
+		await outboundOptOut.click();
+		await expect.element(outboundOptOut).toBeChecked();
+
+		const changedEvent = new Event('beforeunload', { cancelable: true });
+		window.dispatchEvent(changedEvent);
+		expect(changedEvent.defaultPrevented).toBe(true);
 	});
 });
