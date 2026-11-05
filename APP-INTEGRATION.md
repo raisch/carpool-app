@@ -249,7 +249,7 @@ acceptance of the legacy-backend screenshot limitation.
 **Exit criteria:** approved sequence (Option B first, then Option A), approved
 asset list, URL/label decision, and baseline evidence are recorded.
 
-### Milestone 1 — Carpool-only legacy skin (Option B)
+### Milestone 1 — Carpool-only legacy skin (Option B) (**COMPLETE**)
 
 - [x] Convert the landing page to legacy panel geometry and information
       density.
@@ -275,11 +275,19 @@ authorization model.
 
 ### Milestone 2 — Shared branded shell (Option A)
 
-- [ ] Add masthead, responsive navigation, content frame, and footer
+- [x] Add masthead, responsive navigation, content frame, and footer
       composition.
-- [ ] Preserve identity states, role visibility, simulator return link, and
+- [x] Preserve identity states, role visibility, simulator return link, and
       server-side authorization.
-- [ ] Add responsive and keyboard-accessibility tests.
+- [x] Add responsive and keyboard-accessibility tests.
+
+**Status:** the app-owned shell is implemented around the existing routes.
+The masthead and sponsor footer use the approved local assets. The navbar
+contains only the existing Carpool link, role-specific links, user/role
+information, and the `Return to Ligerbots` action. Mobile navigation is
+collapsible and keyboard-tested. Chromium and WebKit pass the shell tests;
+Firefox remains configured in the browser matrix but is blocked locally by its
+Playwright binary failing before headless profile creation.
 
 **Exit criteria:** every existing route renders in the branded frame without
 route or authentication regressions.

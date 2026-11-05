@@ -5,40 +5,44 @@
 	let { identity, simulatorUrl }: { identity: IdentityState; simulatorUrl: string | null } =
 		$props();
 	const currentUser = $derived(identity.status === 'configured' ? identity.currentUser : null);
+	let menuOpen = $state(false);
 </script>
 
-<nav class="border-b border-slate-200 bg-white" aria-label="Carpool navigation">
-	<div
-		class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 text-sm sm:px-6 lg:px-8"
-	>
-		<a class="font-semibold text-blue-700 hover:underline" href={resolve('/')}>Carpool</a>
-		{#if currentUser?.role === 'admin'}
-			<a class="text-slate-700 hover:text-blue-700 hover:underline" href={resolve('/events/create')}
-				>New event</a
-			>
-			<a class="text-slate-700 hover:text-blue-700 hover:underline" href={resolve('/vehicles')}
-				>Vehicles</a
-			>
-			<a class="text-slate-700 hover:text-blue-700 hover:underline" href={resolve('/users')}
-				>Users</a
-			>
-		{:else if currentUser?.role === 'driver'}
-			<a class="text-slate-700 hover:text-blue-700 hover:underline" href={resolve('/vehicles')}
-				>My vehicle</a
-			>
-		{/if}
-		{#if currentUser}
-			<div class="ml-auto flex items-center gap-3">
-				<span class="text-slate-500">{currentUser.displayName} · {currentUser.role}</span>
-				{#if simulatorUrl}
-					<!-- eslint-disable svelte/no-navigation-without-resolve -- simulatorUrl is an external site URL -->
-					<a
-						class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-800 hover:bg-slate-100"
-						href={simulatorUrl}>Return to Ligerbots</a
-					>
-					<!-- eslint-enable svelte/no-navigation-without-resolve -->
-				{/if}
-			</div>
-		{/if}
+<nav class="site-navigation" aria-label="Carpool navigation">
+	<div class="site-navigation-inner">
+		<a class="site-navigation-brand" href={resolve('/')}>Carpool</a>
+		<button
+			class="site-navigation-toggle"
+			type="button"
+			aria-controls="carpool-navigation-links"
+			aria-expanded={menuOpen}
+			aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+			onclick={() => (menuOpen = !menuOpen)}
+		>
+			<span aria-hidden="true">☰</span>
+			<span>{menuOpen ? 'Close' : 'Menu'}</span>
+		</button>
+		<div
+			id="carpool-navigation-links"
+			class={['site-navigation-links', menuOpen && 'site-navigation-links-open']}
+		>
+			{#if currentUser?.role === 'admin'}
+				<a class="site-navigation-link" href={resolve('/events/create')}>New event</a>
+				<a class="site-navigation-link" href={resolve('/vehicles')}>Vehicles</a>
+				<a class="site-navigation-link" href={resolve('/users')}>Users</a>
+			{:else if currentUser?.role === 'driver'}
+				<a class="site-navigation-link" href={resolve('/vehicles')}>My vehicle</a>
+			{/if}
+			{#if currentUser}
+				<div class="site-navigation-user">
+					<span>{currentUser.displayName} · {currentUser.role}</span>
+					{#if simulatorUrl}
+						<!-- eslint-disable svelte/no-navigation-without-resolve -- simulatorUrl is an external site URL -->
+						<a class="site-navigation-return" href={simulatorUrl}>Return to Ligerbots</a>
+						<!-- eslint-enable svelte/no-navigation-without-resolve -->
+					{/if}
+				</div>
+			{/if}
+		</div>
 	</div>
 </nav>

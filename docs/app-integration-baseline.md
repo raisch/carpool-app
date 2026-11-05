@@ -49,11 +49,11 @@ endpoints and are approved for reuse in the new app.
 | New favicon            | `src/lib/assets/favicon.svg`                                                                                         | New app favicon           | Present in new app; approval not required for baseline |
 
 Only the carpool-relevant legacy assets are copied into the new application's
-`static/images` directory. They are approved but are not wired into the UI by
-this milestone. Portal/blog imagery and sponsor-page-only graphics
-were intentionally excluded. The legacy app's Directus UUID references were
-not copied directly; the publicly served equivalents were saved locally under
-their original `/images` filenames.
+`static/images` directory. The approved masthead, social, donation, and
+sponsor assets are wired into the Option A shell; portal/blog imagery and
+sponsor-page-only graphics were intentionally excluded. The legacy app's
+Directus UUID references were not copied directly; the publicly served
+equivalents were saved locally under their original `/images` filenames.
 
 ## Baseline screenshots
 

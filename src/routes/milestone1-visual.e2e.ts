@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Milestone 1 visual baseline', () => {
+test.describe('Branded shell visual baseline', () => {
 	test('landing page at approved widths', async ({ page }) => {
 		for (const [label, width, height] of [
 			['desktop', 1440, 900],
