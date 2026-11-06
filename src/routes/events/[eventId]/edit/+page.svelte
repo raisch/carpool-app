@@ -75,6 +75,12 @@
 				>
 				<a
 					class="text-sm font-semibold text-blue-700 hover:underline"
+					href={`${resolve('/events/[eventId]/complete-print', { eventId: data.details.event.id })}?print=1`}
+					target="_blank"
+					rel="noreferrer">Complete event report</a
+				>
+				<a
+					class="text-sm font-semibold text-blue-700 hover:underline"
 					href={resolve('/events/[eventId]/export', { eventId: data.details.event.id })}
 					>Download CSV</a
 				>

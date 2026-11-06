@@ -76,6 +76,12 @@
 							>
 							<a
 								class="legacy-action"
+								href={`${resolve('/events/[eventId]/complete-print', { eventId: data.eventId })}?print=1`}
+								target="_blank"
+								rel="noreferrer">Complete event report</a
+							>
+							<a
+								class="legacy-action"
 								href={resolve('/events/[eventId]/export', { eventId: data.eventId })}
 								>Download rider CSV</a
 							>

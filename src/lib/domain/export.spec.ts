@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { eventRiderCsv, eventRiderExportRows, incompleteRiderIds } from './export';
+import {
+	completeEventPrintData,
+	eventRiderCsv,
+	eventRiderExportRows,
+	incompleteRiderIds
+} from './export';
 import type { AdminEventDto } from './types';
 
 const event: AdminEventDto = {
@@ -110,6 +115,52 @@ describe('event rider export', () => {
 		expect(rows[0]).toMatchObject({ eventId: '12', direction: 'return', riderName: 'Rider\nOne' });
 		expect(rows[0]).not.toHaveProperty('email');
 		expect(rows[0]).not.toHaveProperty('phone');
+	});
+
+	it('builds a complete report with assigned, opt-out, and incomplete statuses', () => {
+		const report = completeEventPrintData({
+			...event,
+			transportationDecisions: [
+				{
+					id: 'decision-1',
+					eventId: '12',
+					userId: '3',
+					direction: 'outbound',
+					decision: 'opt_out',
+					tripRideId: null,
+					updatedAt: '2026-11-01T00:00:00Z'
+				},
+				{
+					id: 'decision-2',
+					eventId: '12',
+					userId: 'unassigned',
+					direction: 'outbound',
+					decision: 'opt_out',
+					tripRideId: null,
+					updatedAt: '2026-11-01T00:00:00Z'
+				}
+			]
+		});
+
+		expect(report.riders).toEqual([
+			{
+				riderId: '3',
+				riderName: 'Rider\nOne',
+				incomplete: false,
+				outbound: 'opt_out',
+				return: 'assigned'
+			},
+			{
+				riderId: 'unassigned',
+				riderName: 'unassigned',
+				incomplete: true,
+				outbound: 'opt_out',
+				return: 'incomplete'
+			}
+		]);
+		expect(report.incompleteCount).toBe(1);
+		expect(report.optOutCount).toBe(2);
+		expect(report.rides[0]).toMatchObject({ direction: 'return', capacity: 8, occupiedSeats: 1 });
 	});
 
 	it('escapes CSV cells and emits a stable header', () => {

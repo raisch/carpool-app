@@ -1,4 +1,9 @@
-import type { AdminEventDto, Direction, TransportationDecisionDto } from './types';
+import type {
+	AdminEventDto,
+	Direction,
+	TransportationDecisionDto,
+	UserReferenceDto
+} from './types';
 
 export interface EventRiderExportRow {
 	eventId: string;
@@ -21,6 +26,152 @@ export interface EventRiderExportRow {
 
 const directionOrder: Record<Direction, number> = { outbound: 0, return: 1 };
 const directions: Direction[] = ['outbound', 'return'];
+
+export interface CompleteEventRiderStatus {
+	riderId: string;
+	riderName: string;
+	incomplete: boolean;
+	outbound: 'assigned' | 'opt_out' | 'incomplete';
+	return: 'assigned' | 'opt_out' | 'incomplete';
+}
+
+export interface CompleteEventPrintRide {
+	direction: Direction;
+	tripId: string;
+	departsOn: string;
+	departsAt: string;
+	departsFrom: string;
+	destination: string;
+	vehicleName: string;
+	vehicleType: string;
+	driverName: string;
+	capacity: number;
+	occupiedSeats: number;
+	remainingSeats: number;
+	riders: UserReferenceDto[];
+}
+
+export interface CompleteEventPrintData {
+	event: AdminEventDto['event'];
+	riders: CompleteEventRiderStatus[];
+	rides: CompleteEventPrintRide[];
+	incompleteCount: number;
+	optOutCount: number;
+}
+
+function riderNames(event: AdminEventDto): Map<string, string> {
+	const names = new Map<string, string>();
+	for (const trip of event.trips) {
+		for (const ride of trip.rides) {
+			for (const rider of ride.riders) names.set(rider.id, rider.displayName);
+		}
+	}
+	return names;
+}
+
+/**
+ * Builds the administrator-only operational report from the already-scoped
+ * aggregate. It deliberately exposes only names/IDs and fields supported by
+ * the aggregate; there is no fabricated notes or management metadata.
+ */
+export function completeEventPrintData(event: AdminEventDto): CompleteEventPrintData {
+	const names = riderNames(event);
+	const assigned = new Map<string, Set<Direction>>();
+	for (const trip of event.trips) {
+		for (const ride of trip.rides) {
+			for (const rider of ride.riders) {
+				names.set(rider.id, rider.displayName);
+				const directionsForRider = assigned.get(rider.id) ?? new Set<Direction>();
+				directionsForRider.add(trip.direction);
+				assigned.set(rider.id, directionsForRider);
+			}
+		}
+	}
+
+	const decisions = new Map<string, Map<Direction, TransportationDecisionDto['decision']>>();
+	for (const decision of event.transportationDecisions ?? []) {
+		const riderDecisions = decisions.get(decision.userId) ?? new Map();
+		riderDecisions.set(decision.direction, decision.decision);
+		decisions.set(decision.userId, riderDecisions);
+		if (!names.has(decision.userId)) names.set(decision.userId, decision.userId);
+	}
+
+	const riders = [...new Set([...assigned.keys(), ...decisions.keys()])]
+		.sort((left, right) => (names.get(left) ?? left).localeCompare(names.get(right) ?? right))
+		.map((riderId) => {
+			const status = (direction: Direction): CompleteEventRiderStatus[Direction] =>
+				assigned.get(riderId)?.has(direction)
+					? 'assigned'
+					: decisions.get(riderId)?.get(direction) === 'opt_out'
+						? 'opt_out'
+						: 'incomplete';
+			const outbound = status('outbound');
+			const returning = status('return');
+			return {
+				riderId,
+				riderName: names.get(riderId) ?? riderId,
+				incomplete: outbound === 'incomplete' || returning === 'incomplete',
+				outbound,
+				return: returning
+			};
+		});
+
+	const rides = event.trips
+		.flatMap((trip) =>
+			trip.rides.length > 0
+				? trip.rides.map((ride) => ({
+						direction: trip.direction,
+						tripId: trip.id,
+						departsOn: trip.departsOn,
+						departsAt: trip.departsAt,
+						departsFrom: trip.departsFrom,
+						destination: trip.destination,
+						vehicleName: ride.vehicle.name,
+						vehicleType: ride.vehicle.vehicleType,
+						driverName: ride.vehicle.primaryDriver.displayName,
+						capacity: ride.vehicle.seats,
+						occupiedSeats: ride.occupiedSeats,
+						remainingSeats: ride.remainingSeats,
+						riders: ride.riders
+					}))
+				: [
+						{
+							direction: trip.direction,
+							tripId: trip.id,
+							departsOn: trip.departsOn,
+							departsAt: trip.departsAt,
+							departsFrom: trip.departsFrom,
+							destination: trip.destination,
+							vehicleName: 'No vehicle assigned',
+							vehicleType: '—',
+							driverName: '—',
+							capacity: 0,
+							occupiedSeats: 0,
+							remainingSeats: 0,
+							riders: []
+						}
+					]
+		)
+		.sort(
+			(left, right) =>
+				directionOrder[left.direction] - directionOrder[right.direction] ||
+				left.departsOn.localeCompare(right.departsOn) ||
+				left.departsAt.localeCompare(right.departsAt) ||
+				left.vehicleName.localeCompare(right.vehicleName)
+		);
+
+	return {
+		event: event.event,
+		riders,
+		rides,
+		incompleteCount: riders.filter((rider) => rider.incomplete).length,
+		optOutCount: riders.reduce(
+			(count, rider) =>
+				count + Number(rider.outbound === 'opt_out') + Number(rider.return === 'opt_out'),
+			0
+		)
+	};
+}
 
 /**
  * Returns riders who have no assigned ride and no explicit opt-out in at least
