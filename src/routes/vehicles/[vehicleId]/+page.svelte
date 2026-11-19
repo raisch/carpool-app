@@ -11,7 +11,7 @@
 	<title>Vehicle details | Ligerbots Carpool</title>
 </svelte:head>
 
-<main id="main-content" class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+<main id="main-content" class="legacy-page mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
 	<a class="text-sm text-blue-700 hover:underline" href={resolve('/vehicles')}>← Back to vehicles</a
 	>
 	<IdentityNotice identity={data.identity} />
@@ -43,7 +43,7 @@
 			{:else}
 				<div class="mt-4 space-y-4">
 					{#each data.vehicle.assignments as assignment (assignment.tripRideId)}
-						<article class="rounded-2xl border border-slate-200 bg-white p-5">
+						<article class="legacy-panel p-4">
 							<h3 class="font-semibold">
 								{assignment.trip.direction} · {assignment.trip.destination}
 							</h3>
