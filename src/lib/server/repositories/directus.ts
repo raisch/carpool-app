@@ -430,8 +430,8 @@ export class DirectusAdminRepository implements AdminRepository {
 		});
 		if (!records[0]) return null;
 		const event = toEvent(records[0]);
-		const trips = (
-			await Promise.all(
+		const [trips, decisionRecords] = await Promise.all([
+			Promise.all(
 				[
 					['outbound', CARPOOL_COLLECTIONS.outboundTrips] as const,
 					['return', CARPOOL_COLLECTIONS.returnTrips] as const
@@ -444,9 +444,12 @@ export class DirectusAdminRepository implements AdminRepository {
 						tripRecords.map((value) => loadAdminTrip(this.client, toTrip(value, direction)))
 					);
 				})
-			)
-		).flat();
-		return { event, trips };
+			).then((tripGroups) => tripGroups.flat()),
+			this.client.readItems(CARPOOL_COLLECTIONS.transportationDecisions, {
+				filters: [equal('event_id', eventId)]
+			})
+		]);
+		return { event, trips, transportationDecisions: decisionRecords.map(toDecision) };
 	}
 
 	async createEvent(input: EventMutationInput): Promise<EventSummaryDto> {

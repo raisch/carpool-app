@@ -9,7 +9,7 @@
 
 <svelte:head><title>Create event | Ligerbots Carpool</title></svelte:head>
 
-<main id="main-content" class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+<main id="main-content" class="legacy-page mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
 	<a class="text-sm text-blue-700 hover:underline" href={resolve('/')}>← Back to events</a>
 	<h1 class="mt-3 text-3xl font-bold">Create event</h1>
 	<IdentityNotice identity={data.identity} />

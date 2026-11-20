@@ -23,15 +23,16 @@
 	);
 </script>
 
-<label
+<article
 	class={[
-		'block rounded-xl border p-4 transition',
-		selected ? 'border-blue-700 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white',
-		unavailable ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:border-blue-400'
+		'legacy-ride',
+		selected ? 'legacy-ride-selected' : '',
+		unavailable ? 'opacity-60' : ''
 	].join(' ')}
 >
-	<div class="flex items-start gap-3">
+	<div class="flex items-start gap-3 p-3">
 		<input
+			id={`ride-${ride.id}`}
 			type="radio"
 			{name}
 			value={ride.id}
@@ -40,30 +41,41 @@
 			onchange={() => onselect(ride.id)}
 			class="mt-1 size-4 accent-blue-700"
 		/>
-		<span class="min-w-0 flex-1">
+		<label class="min-w-0 flex-1" for={`ride-${ride.id}`}>
 			<span class="flex flex-wrap items-center justify-between gap-2">
 				<strong class="text-base text-slate-950">{ride.vehicle.name}</strong>
 				{#if selected}
-					<span class="rounded-full bg-blue-700 px-2 py-1 text-xs font-semibold text-white"
+					<span class="rounded bg-blue-700 px-2 py-1 text-xs font-semibold text-white"
 						>Selected</span
 					>
 				{:else if full}
-					<span class="rounded-full bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700"
+					<span class="rounded bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700"
 						>Full</span
 					>
 				{/if}
 			</span>
-			<span class="mt-1 block text-sm text-slate-600">
-				{ride.vehicle.vehicleType} · Driver: {ride.vehicle.primaryDriver.displayName}
-			</span>
-			<span class="mt-2 block text-sm font-medium text-slate-700">{capacityLabel}</span>
-			{#if ride.riders.length > 0}
-				<span class="mt-2 block text-sm text-slate-600">
-					Riders: {ride.riders.map((rider) => rider.displayName).join(', ')}
-				</span>
-			{:else}
-				<span class="mt-2 block text-sm text-slate-500">No riders yet</span>
-			{/if}
-		</span>
+			<span class="mt-1 block text-sm text-slate-600">{capacityLabel}</span>
+		</label>
 	</div>
-</label>
+	<details class="border-t border-slate-200 px-3 py-2 text-sm">
+		<summary class="cursor-pointer font-semibold text-blue-700">View ride details</summary>
+		<dl class="mt-3 grid gap-2 sm:grid-cols-2">
+			<div>
+				<dt class="legacy-meta-label">Vehicle</dt>
+				<dd>{ride.vehicle.vehicleType}</dd>
+			</div>
+			<div>
+				<dt class="legacy-meta-label">Driver</dt>
+				<dd>{ride.vehicle.primaryDriver.displayName}</dd>
+			</div>
+			<div class="sm:col-span-2">
+				<dt class="legacy-meta-label">Riders</dt>
+				<dd>
+					{ride.riders.length > 0
+						? ride.riders.map((rider) => rider.displayName).join(', ')
+						: 'No riders yet'}
+				</dd>
+			</div>
+		</dl>
+	</details>
+</article>

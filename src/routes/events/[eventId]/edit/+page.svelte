@@ -58,7 +58,7 @@
 
 <svelte:head><title>Edit event | Ligerbots Carpool</title></svelte:head>
 
-<main id="main-content" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+<main id="main-content" class="legacy-page mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
 	<a class="text-sm text-blue-700 hover:underline" href={resolve('/')}>← Back to events</a>
 	<IdentityNotice identity={data.identity} />
 	{#if data.status === 'error'}
@@ -69,8 +69,15 @@
 			<div class="flex flex-wrap gap-3">
 				<a
 					class="text-sm font-semibold text-blue-700 hover:underline"
-					href={resolve('/events/[eventId]/riders', { eventId: data.details.event.id })}
-					>Rider print view</a
+					href={`${resolve('/events/[eventId]/riders', { eventId: data.details.event.id })}?print=1`}
+					target="_blank"
+					rel="noreferrer">Rider print view</a
+				>
+				<a
+					class="text-sm font-semibold text-blue-700 hover:underline"
+					href={`${resolve('/events/[eventId]/complete-print', { eventId: data.details.event.id })}?print=1`}
+					target="_blank"
+					rel="noreferrer">Complete event report</a
 				>
 				<a
 					class="text-sm font-semibold text-blue-700 hover:underline"
@@ -92,7 +99,7 @@
 			</div>
 			<div class="mt-4 space-y-5">
 				{#each data.details.trips as trip (trip.id)}
-					<div class="rounded-2xl border border-slate-200 bg-white p-5">
+					<div class="legacy-panel p-4">
 						<AdminTripForm eventId={data.details.event.id} {trip} />
 						<div class="mt-4 border-t border-slate-200 pt-4">
 							<h3 class="font-semibold">Assigned vehicles</h3>
@@ -101,7 +108,7 @@
 								</p>{/if}
 							<ul class="mt-2 space-y-2">
 								{#each trip.rides as ride (ride.id)}<li
-										class="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 p-3 text-sm"
+										class="flex flex-wrap items-center justify-between gap-3 rounded border border-slate-200 bg-slate-50 p-3 text-sm"
 									>
 										<span
 											><strong>{ride.vehicle.name}</strong> · {ride.riders.length}/{ride.vehicle

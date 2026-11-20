@@ -13,7 +13,7 @@
 
 <svelte:head><title>Vehicles | Ligerbots Carpool</title></svelte:head>
 
-<main id="main-content" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+<main id="main-content" class="legacy-page mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
 	<a class="text-sm text-blue-700 hover:underline" href={resolve('/')}>← Back to events</a>
 	<div class="mt-3 flex flex-wrap items-end justify-between gap-4">
 		<div>
@@ -42,10 +42,8 @@
 			/>
 		</div>
 	{:else}
-		<div class="mt-6 grid gap-5 md:grid-cols-2">
-			{#each data.vehicles as entry (entry.vehicle.id)}<article
-					class="rounded-2xl border border-slate-200 bg-white p-5"
-				>
+		<div class="mt-6 grid gap-4 md:grid-cols-2">
+			{#each data.vehicles as entry (entry.vehicle.id)}<article class="legacy-panel p-4">
 					<div class="flex items-start justify-between gap-3">
 						<div>
 							<h2 class="text-xl font-semibold">{entry.vehicle.name}</h2>

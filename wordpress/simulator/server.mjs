@@ -24,29 +24,29 @@ const users = new Map([
 		`${userPrefix}9001`,
 		{
 			id: `${userPrefix}9001`,
-			displayName: 'Demo Admin',
+			displayName: 'Admin',
 			role: 'admin',
-			firstName: 'Demo',
+			firstName: 'Carpool',
 			lastName: 'Admin',
-			email: 'demo-admin@example.test'
+			email: 'carpool-admin@example.test'
 		}
 	],
 	[
 		`${userPrefix}9002`,
 		{
 			id: `${userPrefix}9002`,
-			displayName: 'Demo Driver',
+			displayName: 'Driver 1',
 			role: 'driver',
 			firstName: 'Demo',
-			lastName: 'Driver',
-			email: 'demo-driver@example.test'
+			lastName: 'Driver 1',
+			email: 'demo-driver-1@example.test'
 		}
 	],
 	[
 		`${userPrefix}9003`,
 		{
 			id: `${userPrefix}9003`,
-			displayName: 'Demo Rider 1',
+			displayName: 'Rider 1',
 			role: 'rider',
 			firstName: 'Demo',
 			lastName: 'Rider 1',
@@ -57,7 +57,7 @@ const users = new Map([
 		`${userPrefix}9004`,
 		{
 			id: `${userPrefix}9004`,
-			displayName: 'Demo Rider 2',
+			displayName: 'Rider 2',
 			role: 'rider',
 			firstName: 'Demo',
 			lastName: 'Rider 2',
@@ -68,7 +68,7 @@ const users = new Map([
 		`${userPrefix}9005`,
 		{
 			id: `${userPrefix}9005`,
-			displayName: 'Demo Rider 3',
+			displayName: 'Rider 3',
 			role: 'rider',
 			firstName: 'Demo',
 			lastName: 'Rider 3',
@@ -79,7 +79,7 @@ const users = new Map([
 		`${userPrefix}9006`,
 		{
 			id: `${userPrefix}9006`,
-			displayName: 'Demo Rider 4',
+			displayName: 'Rider 4',
 			role: 'rider',
 			firstName: 'Demo',
 			lastName: 'Rider 4',
@@ -90,7 +90,7 @@ const users = new Map([
 		`${userPrefix}9007`,
 		{
 			id: `${userPrefix}9007`,
-			displayName: 'Demo Rider 5',
+			displayName: 'Rider 5',
 			role: 'rider',
 			firstName: 'Demo',
 			lastName: 'Rider 5',
@@ -255,11 +255,11 @@ function loginPage(message = '') {
     <label>Test WordPress user
       <select name="user_id">
         ${[...users.values()]
-					.map(
-						(user) =>
-							`<option value="${escapeHtml(user.id)}">${escapeHtml(user.displayName)} (${escapeHtml(user.role)})</option>`
-					)
-					.join('')}
+			.map(
+				(user) =>
+					`<option value="${escapeHtml(user.id)}">${escapeHtml(user.displayName)} (${escapeHtml(user.role)})</option>`
+			)
+			.join('')}
       </select>
     </label>
     <button type="submit">Log in</button>
