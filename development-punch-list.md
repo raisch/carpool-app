@@ -48,8 +48,8 @@ long as the user-facing result is equivalent or better.
   weight.
 - [ ] Include the team identity prominently enough that the app feels like a
   LigerBots application immediately on arrival.
-- [ ] Keep external brand/social links only if they improve the standalone
-  app's presentation; do not make them a prerequisite for navigation.
+- ~~[ ] Keep external brand/social links only if they improve the standalone
+  app's presentation; do not make them a prerequisite for navigation.~~
 - [ ] Make the header responsive without shrinking the logo into an unusable
   mark.
 - [ ] Use meaningful image alternatives and preserve visible keyboard focus.
@@ -298,6 +298,13 @@ long as the user-facing result is equivalent or better.
   button treatment, terminology, and feedback.
 - [ ] Run type checking, linting, unit tests, Playwright tests, visual
   snapshots, and release verification after the visual changes are complete.
+
+## Other
+- [ ] Show "draft" and "archived" events
+- [ ] (optional) Spreadsheet export
+- [ ] View print list for non-admins
+- [ ] Print list for individual vehicle
+- [ ] (optional) Move riders to other vehicles
 
 ## Completion criteria
 

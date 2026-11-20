@@ -34,7 +34,7 @@ body {
 .site-masthead-inner {
 	display: flex;
 	align-items: flex-end;
-	justify-content: space-between;
+	justify-content: space-around;
 	gap: 1rem;
 	min-height: 9.5rem;
 	padding: 1rem 0 0.75rem;

@@ -7,7 +7,10 @@ import { sveltekit } from '@sveltejs/kit/vite';
 export default defineConfig({
 	server: {
 		host: '0.0.0.0',
-		allowedHosts: ['carpool']
+		allowedHosts: ['carpool'],
+		watch: {
+			usePolling: true
+		}
 	},
 	plugins: [
 		tailwindcss(),
